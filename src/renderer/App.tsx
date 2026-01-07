@@ -1,6 +1,8 @@
 /**
  * ============================================================================
- * INDUSTRIAL SIGNAL PLATFORM - MAIN APPLICATION (COMPLETE)
+ * INDUSTRIAL SIGNAL PLATFORM - MAIN APPLICATION
+ * ============================================================================
+ * Version: 1.1 - Added Cabinet/Panel System
  * ============================================================================
  */
 
@@ -18,23 +20,24 @@ import {
   Project,
   ProjectStatus,
   DeviceInstance,
+  SignalPoint,
   SignalConnection,
   SignalDirection,
   ConnectionStatus,
   WireType,
   AuditEntry,
   AuditAction,
-  ChangeType,
-  ComparisonResult,
+  CabinetInstance,
   getRoleLabel,
   getStatusColor,
-  getChangeTypeColor,
   getSeverityColor,
+  getCabinetCategoryLabel,
 } from '../core/types';
 
 // Engine
 import { ConnectionValidator } from '../core/engine/ConnectionValidator';
 import { UDTFactory } from '../core/engine/UDTFactory';
+import { CabinetFactory } from '../core/engine/CabinetFactory';
 
 // ============================================================================
 // STYLES
@@ -97,27 +100,34 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: 'hidden',
   },
   sidebar: {
-    width: '300px',
+    width: '320px',
     backgroundColor: '#252526',
     borderRight: '1px solid #3c3c3c',
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
   },
+  sidebarSection: {
+    borderBottom: '1px solid #3c3c3c',
+  },
   sidebarHeader: {
-    padding: '14px 18px',
+    padding: '12px 16px',
     backgroundColor: '#2d2d2d',
     borderBottom: '1px solid #3c3c3c',
     fontWeight: 600,
-    fontSize: '12px',
+    fontSize: '11px',
     textTransform: 'uppercase',
     letterSpacing: '1px',
     color: '#808080',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    cursor: 'pointer',
   },
   sidebarContent: {
-    flex: 1,
+    maxHeight: '250px',
     overflow: 'auto',
-    padding: '12px',
+    padding: '8px',
   },
   workArea: {
     flex: 1,
@@ -166,6 +176,10 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '12px',
     transition: 'background-color 0.2s',
   },
+  buttonSmall: {
+    padding: '4px 8px',
+    fontSize: '11px',
+  },
   buttonPrimary: {
     backgroundColor: '#0078d4',
     color: '#ffffff',
@@ -182,57 +196,65 @@ const styles: Record<string, React.CSSProperties> = {
     backgroundColor: '#ca5010',
     color: '#ffffff',
   },
-  card: {
+  cabinetCard: {
     backgroundColor: '#2d2d2d',
-    borderRadius: '6px',
-    marginBottom: '12px',
-    border: '1px solid #3c3c3c',
+    border: '2px solid #3c3c3c',
+    borderRadius: '8px',
+    marginBottom: '16px',
     overflow: 'hidden',
   },
-  cardHeader: {
+  cabinetCardSelected: {
+    borderColor: '#0078d4',
+    boxShadow: '0 0 0 2px rgba(0,120,212,0.3)',
+  },
+  cabinetHeader: {
     padding: '12px 16px',
-    backgroundColor: '#3c3c3c',
-    fontWeight: 600,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  cardBody: {
-    padding: '16px',
-  },
   deviceCard: {
-    backgroundColor: '#2d2d2d',
-    border: '2px solid #3c3c3c',
+    backgroundColor: '#252526',
+    border: '1px solid #3c3c3c',
     borderRadius: '6px',
-    marginBottom: '16px',
+    marginBottom: '8px',
+    marginLeft: '16px',
+    marginRight: '8px',
     overflow: 'hidden',
   },
   deviceCardSelected: {
-    borderColor: '#0078d4',
-    boxShadow: '0 0 0 2px rgba(0,120,212,0.3)',
+    borderColor: '#4fc3f7',
+    boxShadow: '0 0 0 1px rgba(79,195,247,0.3)',
+  },
+  deviceCardStandalone: {
+    backgroundColor: '#2d2d2d',
+    border: '2px solid #3c3c3c',
+    borderRadius: '6px',
+    marginBottom: '12px',
+    overflow: 'hidden',
   },
   signalItem: {
-    padding: '8px 12px',
-    fontSize: '12px',
-    borderRadius: '4px',
+    padding: '6px 10px',
+    fontSize: '11px',
+    borderRadius: '3px',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: '4px',
+    marginBottom: '3px',
     transition: 'all 0.15s',
   },
   signalInput: {
-    backgroundColor: 'rgba(79, 195, 247, 0.2)',
-    borderLeft: '4px solid #4fc3f7',
+    backgroundColor: 'rgba(79, 195, 247, 0.15)',
+    borderLeft: '3px solid #4fc3f7',
   },
   signalOutput: {
-    backgroundColor: 'rgba(255, 183, 77, 0.2)',
-    borderLeft: '4px solid #ffb74d',
+    backgroundColor: 'rgba(255, 183, 77, 0.15)',
+    borderLeft: '3px solid #ffb74d',
   },
   signalBidirectional: {
-    backgroundColor: 'rgba(179, 157, 219, 0.2)',
-    borderLeft: '4px solid #b39ddb',
+    backgroundColor: 'rgba(179, 157, 219, 0.15)',
+    borderLeft: '3px solid #b39ddb',
   },
   table: {
     width: '100%',
@@ -292,15 +314,27 @@ const styles: Record<string, React.CSSProperties> = {
   templateButton: {
     display: 'block',
     width: '100%',
-    padding: '12px 14px',
-    marginBottom: '8px',
+    padding: '10px 12px',
+    marginBottom: '6px',
     backgroundColor: '#3c3c3c',
     border: '1px solid #4c4c4c',
-    borderRadius: '6px',
+    borderRadius: '4px',
     color: '#cccccc',
     cursor: 'pointer',
     textAlign: 'left',
     transition: 'all 0.2s',
+    fontSize: '12px',
+  },
+  emptyState: {
+    textAlign: 'center' as const,
+    padding: '40px 20px',
+    color: '#808080',
+  },
+  statsPanel: {
+    padding: '12px 16px',
+    borderTop: '1px solid #3c3c3c',
+    backgroundColor: '#2d2d2d',
+    fontSize: '11px',
   },
 };
 
@@ -466,6 +500,74 @@ const Notification: React.FC<NotificationProps> = ({ message, type }) => {
 };
 
 // ============================================================================
+// SIGNAL LIST COMPONENT
+// ============================================================================
+
+interface SignalListProps {
+  signals: SignalPoint[];
+  onSignalClick?: (signalId: string) => void;
+  pendingSignalId?: string | null;
+  compact?: boolean;
+}
+
+const SignalList: React.FC<SignalListProps> = ({ signals, onSignalClick, pendingSignalId, compact }) => {
+  const inputs = signals.filter((s: SignalPoint) => s.direction === SignalDirection.INPUT);
+  const outputs = signals.filter((s: SignalPoint) => s.direction === SignalDirection.OUTPUT);
+  const bidirectional = signals.filter((s: SignalPoint) => s.direction === SignalDirection.BIDIRECTIONAL);
+
+  const renderSignal = (signal: SignalPoint, style: React.CSSProperties) => (
+    <div
+      key={signal.id}
+      onClick={() => onSignalClick?.(signal.id)}
+      style={{
+        ...styles.signalItem,
+        ...style,
+        ...(signal.isConnected ? { opacity: 0.6 } : {}),
+        ...(pendingSignalId === signal.id ? { backgroundColor: 'rgba(255,152,0,0.4)' } : {}),
+        padding: compact ? '4px 8px' : '6px 10px',
+        fontSize: compact ? '10px' : '11px',
+      }}
+    >
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {signal.tagName}
+      </span>
+      <span style={{ fontSize: '9px', color: '#808080', marginLeft: '4px' }}>
+        {signal.type} {signal.isConnected && '✓'}
+      </span>
+    </div>
+  );
+
+  return (
+    <div style={{ display: 'flex', gap: '8px', padding: compact ? '4px' : '8px' }}>
+      {inputs.length > 0 && (
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '9px', color: '#4fc3f7', marginBottom: '4px', fontWeight: 600 }}>
+            ⬇ IN ({inputs.length})
+          </div>
+          {inputs.map((s: SignalPoint) => renderSignal(s, styles.signalInput))}
+        </div>
+      )}
+      {outputs.length > 0 && (
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '9px', color: '#ffb74d', marginBottom: '4px', fontWeight: 600 }}>
+            ⬆ OUT ({outputs.length})
+          </div>
+          {outputs.map((s: SignalPoint) => renderSignal(s, styles.signalOutput))}
+        </div>
+      )}
+      {bidirectional.length > 0 && (
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '9px', color: '#b39ddb', marginBottom: '4px', fontWeight: 600 }}>
+            ↔ BI ({bidirectional.length})
+          </div>
+          {bidirectional.map((s: SignalPoint) => renderSignal(s, styles.signalBidirectional))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ============================================================================
 // MAIN APPLICATION COMPONENT
 // ============================================================================
 
@@ -473,15 +575,36 @@ const App: React.FC = () => {
   // ===== STATE =====
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [project, setProject] = useState<Project | null>(null);
+  
+  // Cabinets and Devices
+  const [cabinets, setCabinets] = useState<CabinetInstance[]>([]);
   const [devices, setDevices] = useState<DeviceInstance[]>([]);
   const [connections, setConnections] = useState<SignalConnection[]>([]);
-  const [activeTab, setActiveTab] = useState<'devices' | 'connections' | 'audit' | 'users' | 'compare'>('devices');
+  
+  // UI State
+  const [activeTab, setActiveTab] = useState<'hierarchy' | 'devices' | 'connections' | 'audit' | 'users'>('hierarchy');
+  const [selectedCabinetId, setSelectedCabinetId] = useState<string | null>(null);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+  const [expandedCabinets, setExpandedCabinets] = useState<Set<string>>(new Set());
+  
+  // Connection Mode
   const [connectionMode, setConnectionMode] = useState(false);
-  const [pendingConnection, setPendingConnection] = useState<{ deviceId: string; signalId: string } | null>(null);
+  const [pendingConnection, setPendingConnection] = useState<{ deviceId: string; signalId: string; cabinetId?: string } | null>(null);
+  
+  // Sidebar Sections
+  const [sidebarSections, setSidebarSections] = useState({
+    cabinets: true,
+    devices: true,
+  });
+  
+  // Other
   const [notification, setNotification] = useState<NotificationProps | null>(null);
-  const [comparisonResult, setComparisonResult] = useState<ComparisonResult | null>(null);
   const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([]);
+
+  // ===== COMPUTED =====
+  const standaloneDevices = devices.filter(d => !cabinets.some(c => c.deviceIds.includes(d.instanceId)));
+  const selectedCabinet = cabinets.find(c => c.instanceId === selectedCabinetId);
+  const selectedDevice = devices.find(d => d.instanceId === selectedDeviceId);
 
   // ===== INITIALIZE PROJECT =====
   useEffect(() => {
@@ -545,23 +668,102 @@ const App: React.FC = () => {
     setTimeout(() => setNotification(null), 4000);
   }, []);
 
-  // ===== HANDLERS =====
-  const handleLogout = useCallback(() => {
-    if (currentUser) {
-      auditService.logUserLogout(currentUser.username, currentUser.id);
-    }
-    userService.logout();
-    setCurrentUser(null);
-    setProject(null);
-    setDevices([]);
-    setConnections([]);
-    setComparisonResult(null);
-  }, [currentUser]);
+  const toggleCabinetExpanded = useCallback((cabinetId: string) => {
+    setExpandedCabinets(prev => {
+      const next = new Set(prev);
+      if (next.has(cabinetId)) {
+        next.delete(cabinetId);
+      } else {
+        next.add(cabinetId);
+      }
+      return next;
+    });
+  }, []);
 
-  const handleAddDevice = useCallback((templateType: string) => {
+  // ===== CABINET HANDLERS =====
+  const handleAddCabinet = useCallback((templateType: string) => {
     if (!project || !currentUser) return;
 
-    const tagName = prompt(`Enter device tag name for ${templateType}:`);
+    const tagName = prompt(`Enter cabinet/panel tag name for ${templateType}:`);
+    if (!tagName || !tagName.trim()) return;
+
+    try {
+      const cabinet = CabinetFactory.createFromTemplate(
+        templateType,
+        tagName.trim(),
+        currentUser.username,
+        { position: { x: 50, y: 50 + cabinets.length * 30 } }
+      );
+
+      setCabinets(prev => [...prev, cabinet]);
+      setExpandedCabinets(prev => new Set([...prev, cabinet.instanceId]));
+      setSelectedCabinetId(cabinet.instanceId);
+      
+      auditService.log({
+        action: AuditAction.DEVICE_ADDED,
+        entityType: 'DEVICE',
+        entityId: cabinet.instanceId,
+        entityName: cabinet.tagName,
+        description: `Cabinet "${cabinet.tagName}" (${templateType}) added`,
+        projectId: project.id,
+        projectName: project.name,
+      });
+
+      showNotification(`Cabinet "${tagName}" created successfully`, 'success');
+    } catch (error) {
+      showNotification((error as Error).message, 'error');
+    }
+  }, [project, currentUser, cabinets, showNotification]);
+
+  const handleDeleteCabinet = useCallback((cabinetId: string) => {
+    if (!project) return;
+
+    const cabinet = cabinets.find(c => c.instanceId === cabinetId);
+    if (!cabinet) return;
+
+    const deviceCount = cabinet.deviceIds.length;
+    const confirmMsg = deviceCount > 0
+      ? `Delete cabinet "${cabinet.tagName}" and remove ${deviceCount} device(s) from it? (Devices will become standalone)`
+      : `Delete cabinet "${cabinet.tagName}"?`;
+
+    if (!confirm(confirmMsg)) return;
+
+    // Move devices to standalone (remove from cabinet)
+    setDevices(prev => prev.map(d => {
+      if (cabinet.deviceIds.includes(d.instanceId)) {
+        return { ...d, metadata: { ...d.metadata, cabinetId: undefined } };
+      }
+      return d;
+    }));
+
+    // Remove cabinet
+    setCabinets(prev => prev.filter(c => c.instanceId !== cabinetId));
+
+    if (selectedCabinetId === cabinetId) {
+      setSelectedCabinetId(null);
+    }
+
+    auditService.log({
+      action: AuditAction.DEVICE_DELETED,
+      entityType: 'DEVICE',
+      entityId: cabinetId,
+      entityName: cabinet.tagName,
+      description: `Cabinet "${cabinet.tagName}" deleted`,
+      projectId: project.id,
+      projectName: project.name,
+    });
+
+    showNotification(`Cabinet "${cabinet.tagName}" deleted`, 'info');
+  }, [project, cabinets, selectedCabinetId, showNotification]);
+
+  // ===== DEVICE HANDLERS =====
+  const handleAddDevice = useCallback((templateType: string, targetCabinetId?: string) => {
+    if (!project || !currentUser) return;
+
+    const cabinet = targetCabinetId ? cabinets.find(c => c.instanceId === targetCabinetId) : null;
+    const prefix = cabinet ? `${cabinet.tagName}_` : '';
+    
+    const tagName = prompt(`Enter device tag name for ${templateType}:`, prefix);
     if (!tagName || !tagName.trim()) return;
 
     try {
@@ -572,40 +774,68 @@ const App: React.FC = () => {
         template,
         tagName: tagName.trim().toUpperCase(),
         description: template.description,
-        location: '',
+        location: cabinet?.location || '',
         position: { x: 100 + devices.length * 50, y: 100 + devices.length * 30 },
         rotation: 0,
         scale: 1,
         zIndex: devices.length,
-        signals: template.signals.map(s => ({ ...s, id: uuidv4() })),
+        signals: template.signals.map((s: SignalPoint) => ({ ...s, id: uuidv4() })),
         connectionIds: [],
         createdAt: new Date(),
         createdBy: currentUser.username,
         updatedAt: new Date(),
         updatedBy: currentUser.username,
-        metadata: {},
+        metadata: {
+          cabinetId: targetCabinetId,
+        },
       };
 
       setDevices(prev => [...prev, instance]);
+
+      // Add to cabinet if specified
+      if (targetCabinetId && cabinet) {
+        setCabinets(prev => prev.map(c => {
+          if (c.instanceId === targetCabinetId) {
+            return CabinetFactory.addDevice(c, instance.instanceId, currentUser.username);
+          }
+          return c;
+        }));
+      }
+
+      setSelectedDeviceId(instance.instanceId);
+      
       auditService.logDeviceAdded(instance, project.id, project.name);
-      showNotification(`Device "${tagName}" added successfully`, 'success');
+      showNotification(`Device "${tagName}" added${cabinet ? ` to ${cabinet.tagName}` : ''}`, 'success');
     } catch (error) {
       showNotification((error as Error).message, 'error');
     }
-  }, [project, currentUser, devices, showNotification]);
+  }, [project, currentUser, devices, cabinets, showNotification]);
 
   const handleDeleteDevice = useCallback((deviceId: string) => {
-    if (!project) return;
+    if (!project || !currentUser) return;
 
     const device = devices.find(d => d.instanceId === deviceId);
     if (!device) return;
 
     if (!confirm(`Delete device "${device.tagName}" and all its connections?`)) return;
 
+    // Remove from cabinet if in one
+    const cabinetId = device.metadata?.cabinetId as string | undefined;
+    if (cabinetId) {
+      setCabinets(prev => prev.map(c => {
+        if (c.instanceId === cabinetId) {
+          return CabinetFactory.removeDevice(c, deviceId, currentUser.username);
+        }
+        return c;
+      }));
+    }
+
+    // Remove connections
     setConnections(prev => prev.filter(
       c => c.sourceDeviceId !== deviceId && c.destinationDeviceId !== deviceId
     ));
     
+    // Remove device
     setDevices(prev => prev.filter(d => d.instanceId !== deviceId));
 
     if (selectedDeviceId === deviceId) {
@@ -614,44 +844,126 @@ const App: React.FC = () => {
 
     auditService.logDeviceDeleted(device, project.id, project.name);
     showNotification(`Device "${device.tagName}" deleted`, 'info');
-  }, [project, devices, selectedDeviceId, showNotification]);
+  }, [project, currentUser, devices, selectedDeviceId, showNotification]);
 
-  const handleSignalClick = useCallback((deviceId: string, signalId: string) => {
-    if (!connectionMode || !project) {
+  const handleMoveDeviceToCabinet = useCallback((deviceId: string, targetCabinetId: string | null) => {
+    if (!currentUser) return;
+
+    const device = devices.find(d => d.instanceId === deviceId);
+    if (!device) return;
+
+    const currentCabinetId = device.metadata?.cabinetId as string | undefined;
+    
+    // Remove from current cabinet
+    if (currentCabinetId) {
+      setCabinets(prev => prev.map(c => {
+        if (c.instanceId === currentCabinetId) {
+          return CabinetFactory.removeDevice(c, deviceId, currentUser.username);
+        }
+        return c;
+      }));
+    }
+
+    // Add to new cabinet
+    if (targetCabinetId) {
+      setCabinets(prev => prev.map(c => {
+        if (c.instanceId === targetCabinetId) {
+          return CabinetFactory.addDevice(c, deviceId, currentUser.username);
+        }
+        return c;
+      }));
+    }
+
+    // Update device metadata
+    setDevices(prev => prev.map(d => {
+      if (d.instanceId === deviceId) {
+        return {
+          ...d,
+          metadata: { ...d.metadata, cabinetId: targetCabinetId || undefined },
+          updatedAt: new Date(),
+          updatedBy: currentUser.username,
+        };
+      }
+      return d;
+    }));
+
+    const targetCabinet = cabinets.find(c => c.instanceId === targetCabinetId);
+    showNotification(
+      targetCabinetId 
+        ? `Device moved to ${targetCabinet?.tagName}` 
+        : 'Device moved to standalone',
+      'info'
+    );
+  }, [currentUser, devices, cabinets, showNotification]);
+
+  // ===== CONNECTION HANDLERS =====
+  const handleSignalClick = useCallback((
+    deviceId: string,
+    signalId: string,
+    cabinetId?: string
+  ) => {
+    if (!connectionMode || !project || !currentUser) {
       setSelectedDeviceId(deviceId);
+      if (cabinetId) setSelectedCabinetId(cabinetId);
       return;
     }
 
-    const device = devices.find(d => d.instanceId === deviceId);
-    const signal = device?.signals.find(s => s.id === signalId);
-    if (!device || !signal) return;
+    // Find the signal (could be device signal or cabinet signal)
+    let signal: SignalPoint | undefined;
+    
+    if (cabinetId && !deviceId) {
+      // Cabinet signal
+      const cabinet = cabinets.find(c => c.instanceId === cabinetId);
+      signal = cabinet?.signals.find((s: SignalPoint) => s.id === signalId);
+    } else {
+      // Device signal
+      const device = devices.find(d => d.instanceId === deviceId);
+      signal = device?.signals.find((s: SignalPoint) => s.id === signalId);
+    }
+
+    if (!signal) return;
 
     if (!pendingConnection) {
+      // Starting a new connection
       if (!ConnectionValidator.canBeSource(signal)) {
-        showNotification(`"${signal.tagName}" is an INPUT - cannot be a source. Select an OUTPUT signal.`, 'warning');
+        showNotification(`"${signal.tagName}" is an INPUT - select an OUTPUT signal as source`, 'warning');
         return;
       }
-      setPendingConnection({ deviceId, signalId });
-      showNotification(`Source: ${signal.tagName}. Now click a destination (INPUT) signal.`, 'info');
+      setPendingConnection({ deviceId, signalId, cabinetId });
+      showNotification(`Source: ${signal.tagName}. Now click destination signal.`, 'info');
     } else {
+      // Completing the connection
       if (!ConnectionValidator.canBeDestination(signal)) {
-        showNotification(`"${signal.tagName}" is an OUTPUT - cannot be a destination. Select an INPUT signal.`, 'warning');
+        showNotification(`"${signal.tagName}" is an OUTPUT - select an INPUT signal as destination`, 'warning');
         return;
       }
 
-      const sourceDevice = devices.find(d => d.instanceId === pendingConnection.deviceId);
-      const sourceSignal = sourceDevice?.signals.find(s => s.id === pendingConnection.signalId);
+      // Get source signal
+      let sourceSignal: SignalPoint | undefined;
+      let sourceDevice: DeviceInstance | undefined;
+      
+      if (pendingConnection.cabinetId && !pendingConnection.deviceId) {
+        const sourceCabinet = cabinets.find(c => c.instanceId === pendingConnection.cabinetId);
+        sourceSignal = sourceCabinet?.signals.find((s: SignalPoint) => s.id === pendingConnection.signalId);
+      } else {
+        sourceDevice = devices.find(d => d.instanceId === pendingConnection.deviceId);
+        sourceSignal = sourceDevice?.signals.find((s: SignalPoint) => s.id === pendingConnection.signalId);
+      }
 
-      if (!sourceDevice || !sourceSignal) {
+      if (!sourceSignal) {
         setPendingConnection(null);
         return;
       }
 
+      // Get destination device for validation
+      const destDevice = devices.find(d => d.instanceId === deviceId);
+
+      // Validate connection
       const validation = ConnectionValidator.validate(
         sourceSignal,
         signal,
-        sourceDevice,
-        device,
+        sourceDevice || ({} as DeviceInstance),
+        destDevice || ({} as DeviceInstance),
         connections,
         project.settings
       );
@@ -662,38 +974,31 @@ const App: React.FC = () => {
         return;
       }
 
+      // Create connection
       const connection: SignalConnection = {
         id: uuidv4(),
-        sourceDeviceId: pendingConnection.deviceId,
+        sourceDeviceId: pendingConnection.deviceId || pendingConnection.cabinetId || '',
         sourceSignalId: pendingConnection.signalId,
-        destinationDeviceId: deviceId,
+        destinationDeviceId: deviceId || cabinetId || '',
         destinationSignalId: signalId,
         wireType: project.settings.defaultWireType,
         waypoints: [],
         status: validation.status,
         validationErrors: validation.errors,
         createdAt: new Date(),
-        createdBy: currentUser?.username || 'Unknown',
+        createdBy: currentUser.username,
         updatedAt: new Date(),
-        updatedBy: currentUser?.username || 'Unknown',
+        updatedBy: currentUser.username,
         metadata: {},
       };
 
+      // Update signal states
       sourceSignal.isConnected = true;
       signal.isConnected = true;
       signal.connectedToSignalId = sourceSignal.id;
-      signal.connectedToDeviceId = sourceDevice.instanceId;
+      signal.connectedToDeviceId = pendingConnection.deviceId || pendingConnection.cabinetId;
 
       setConnections(prev => [...prev, connection]);
-      setDevices([...devices]);
-
-      auditService.logConnectionCreated(
-        sourceSignal.tagName,
-        signal.tagName,
-        connection.id,
-        project.id,
-        project.name
-      );
 
       if (validation.warnings.length > 0) {
         showNotification(`Connected with warning: ${validation.warnings[0]}`, 'warning');
@@ -703,7 +1008,7 @@ const App: React.FC = () => {
 
       setPendingConnection(null);
     }
-  }, [connectionMode, pendingConnection, devices, connections, project, currentUser, showNotification]);
+  }, [connectionMode, pendingConnection, devices, cabinets, connections, project, currentUser, showNotification]);
 
   const handleDeleteConnection = useCallback((connectionId: string) => {
     if (!project) return;
@@ -711,35 +1016,52 @@ const App: React.FC = () => {
     const connection = connections.find(c => c.id === connectionId);
     if (!connection) return;
 
-    const sourceDevice = devices.find(d => d.instanceId === connection.sourceDeviceId);
-    const destDevice = devices.find(d => d.instanceId === connection.destinationDeviceId);
-    const sourceSignal = sourceDevice?.signals.find(s => s.id === connection.sourceSignalId);
-    const destSignal = destDevice?.signals.find(s => s.id === connection.destinationSignalId);
-
-    if (destSignal) {
-      destSignal.isConnected = false;
-      destSignal.connectedToSignalId = undefined;
-      destSignal.connectedToDeviceId = undefined;
-    }
+    // Reset signal states
+    setDevices(prev => prev.map(device => ({
+      ...device,
+      signals: device.signals.map((signal: SignalPoint) => {
+        if (signal.id === connection.destinationSignalId) {
+          return {
+            ...signal,
+            isConnected: false,
+            connectedToSignalId: undefined,
+            connectedToDeviceId: undefined,
+          };
+        }
+        return signal;
+      }),
+    })));
 
     setConnections(prev => prev.filter(c => c.id !== connectionId));
-    setDevices([...devices]);
-
-    auditService.logConnectionDeleted(
-      sourceSignal?.tagName || 'Unknown',
-      destSignal?.tagName || 'Unknown',
-      connectionId,
-      project.id,
-      project.name
-    );
-
     showNotification('Connection deleted', 'info');
-  }, [project, connections, devices, showNotification]);
+  }, [project, connections, showNotification]);
+
+  // ===== OTHER HANDLERS =====
+  const handleLogout = useCallback(() => {
+    if (currentUser) {
+      auditService.logUserLogout(currentUser.username, currentUser.id);
+    }
+    userService.logout();
+    setCurrentUser(null);
+    setProject(null);
+    setCabinets([]);
+    setDevices([]);
+    setConnections([]);
+  }, [currentUser]);
 
   const handleExport = useCallback(() => {
     if (!project) return;
 
-    const jsonString = comparisonService.exportToJson(project, devices, connections);
+    const exportData = {
+      project,
+      cabinets,
+      devices,
+      connections,
+      exportedAt: new Date().toISOString(),
+      version: '1.1',
+    };
+
+    const jsonString = JSON.stringify(exportData, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -749,82 +1071,35 @@ const App: React.FC = () => {
     URL.revokeObjectURL(url);
 
     showNotification('Project exported successfully', 'success');
-  }, [project, devices, connections, showNotification]);
-
-  const handleImport = useCallback(() => {
-    if (!project) return;
-
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const content = event.target?.result as string;
-        const importedData = comparisonService.parseImportedJson(content);
-
-        if (!importedData) {
-          showNotification('Invalid import file format', 'error');
-          return;
-        }
-
-        const result = comparisonService.compareImport(project, devices, connections, importedData);
-        setComparisonResult(result);
-        setActiveTab('compare');
-        showNotification(`Comparison complete: ${result.summary.totalChanges} changes found`, 'info');
-      };
-      reader.readAsText(file);
-    };
-    input.click();
-  }, [project, devices, connections, showNotification]);
+  }, [project, cabinets, devices, connections, showNotification]);
 
   const handleValidateAll = useCallback(() => {
     if (!project) return;
 
-    const tempProject: Project = {
-      ...project,
-      devices: new Map(devices.map(d => [d.instanceId, d])),
-      connections: new Map(connections.map(c => [c.id, c])),
-    };
+    let errorCount = 0;
+    let warningCount = 0;
 
-    const results = ConnectionValidator.validateProject(tempProject);
-    const summary = ConnectionValidator.getValidationSummary(results);
+    connections.forEach(conn => {
+      if (conn.status === ConnectionStatus.INVALID) errorCount++;
+      if (conn.status === ConnectionStatus.WARNING) warningCount++;
+    });
 
-    if (summary.invalid > 0) {
-      showNotification(`Validation: ${summary.invalid} errors, ${summary.warnings} warnings`, 'error');
-    } else if (summary.warnings > 0) {
-      showNotification(`Validation passed with ${summary.warnings} warnings`, 'warning');
+    if (errorCount > 0) {
+      showNotification(`Validation: ${errorCount} errors, ${warningCount} warnings`, 'error');
+    } else if (warningCount > 0) {
+      showNotification(`Validation passed with ${warningCount} warnings`, 'warning');
     } else {
-      showNotification(`All ${summary.valid} connections are valid!`, 'success');
+      showNotification(`All ${connections.length} connections are valid!`, 'success');
     }
-  }, [project, devices, connections, showNotification]);
-
-  const handleAcceptAllChanges = useCallback(() => {
-    comparisonService.acceptAllChanges();
-    const accepted = comparisonService.completeMerge();
-    showNotification(`${accepted.length} changes accepted and merged`, 'success');
-    setComparisonResult(null);
-    setActiveTab('devices');
-  }, [showNotification]);
-
-  const handleRejectAllChanges = useCallback(() => {
-    comparisonService.rejectAllChanges();
-    comparisonService.cancelMerge();
-    showNotification('All changes rejected', 'info');
-    setComparisonResult(null);
-    setActiveTab('devices');
-  }, [showNotification]);
+  }, [project, connections, showNotification]);
 
   // ===== RENDER LOGIN IF NOT AUTHENTICATED =====
   if (!currentUser) {
     return <LoginScreen onLogin={setCurrentUser} />;
   }
 
-  const selectedDevice = devices.find(d => d.instanceId === selectedDeviceId);
-  const availableTemplates = UDTFactory.getAvailableTemplates();
+  const cabinetTemplates = CabinetFactory.getAvailableTemplates();
+  const deviceTemplates = UDTFactory.getAvailableTemplates();
 
   // ===== MAIN RENDER =====
   return (
@@ -856,7 +1131,7 @@ const App: React.FC = () => {
       <div style={styles.toolbar}>
         <div style={styles.toolbarGroup}>
           <button onClick={handleExport} style={styles.button}>📤 Export</button>
-          <button onClick={handleImport} style={styles.button}>📥 Import & Compare</button>
+          <button style={styles.button}>📥 Import</button>
         </div>
         <div style={styles.toolbarGroup}>
           <button 
@@ -889,8 +1164,8 @@ const App: React.FC = () => {
             borderRadius: '4px',
           }}>
             {pendingConnection 
-              ? '👆 Click destination signal (INPUT/Blue)' 
-              : '👆 Click source signal (OUTPUT/Orange)'}
+              ? '👆 Click destination signal (INPUT)' 
+              : '👆 Click source signal (OUTPUT)'}
           </span>
         )}
       </div>
@@ -899,46 +1174,104 @@ const App: React.FC = () => {
       <div style={styles.main}>
         {/* Sidebar */}
         <div style={styles.sidebar}>
-          <div style={styles.sidebarHeader}>📦 Add Device</div>
-          <div style={styles.sidebarContent}>
-            {availableTemplates.map(template => {
-              const info = UDTFactory.getTemplateInfo(template);
-              return (
-                <button
-                  key={template}
-                  onClick={() => handleAddDevice(template)}
-                  style={styles.templateButton}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#4c4c4c'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3c3c3c'}
-                >
-                  <div style={{ fontWeight: 600, marginBottom: '4px' }}>+ {template}</div>
-                  <div style={{ fontSize: '11px', color: '#808080' }}>
-                    {info?.description || 'Generic device template'}
-                  </div>
-                </button>
-              );
-            })}
+          {/* Cabinet Templates Section */}
+          <div style={styles.sidebarSection}>
+            <div 
+              style={styles.sidebarHeader}
+              onClick={() => setSidebarSections(s => ({ ...s, cabinets: !s.cabinets }))}
+            >
+              <span>🏢 ADD CABINET/PANEL</span>
+              <span>{sidebarSections.cabinets ? '▼' : '▶'}</span>
+            </div>
+            {sidebarSections.cabinets && (
+              <div style={styles.sidebarContent}>
+                {cabinetTemplates.map(template => {
+                  const info = CabinetFactory.getTemplateInfo(template);
+                  return (
+                    <button
+                      key={template}
+                      onClick={() => handleAddCabinet(template)}
+                      style={styles.templateButton}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4c4c4c')}
+                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#3c3c3c')}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>{info?.icon || '📦'}</span>
+                        <div>
+                          <div style={{ fontWeight: 500 }}>{info?.name || template}</div>
+                          <div style={{ fontSize: '10px', color: '#808080' }}>
+                            {info?.description?.substring(0, 40) || 'Cabinet template'}
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Device Templates Section */}
+          <div style={styles.sidebarSection}>
+            <div 
+              style={styles.sidebarHeader}
+              onClick={() => setSidebarSections(s => ({ ...s, devices: !s.devices }))}
+            >
+              <span>📦 ADD DEVICE</span>
+              <span>{sidebarSections.devices ? '▼' : '▶'}</span>
+            </div>
+            {sidebarSections.devices && (
+              <div style={styles.sidebarContent}>
+                {deviceTemplates.map(template => {
+                  const info = UDTFactory.getTemplateInfo(template);
+                  return (
+                    <button
+                      key={template}
+                      onClick={() => handleAddDevice(template, selectedCabinetId || undefined)}
+                      style={styles.templateButton}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4c4c4c')}
+                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#3c3c3c')}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>{info?.icon || '⚙️'}</span>
+                        <div>
+                          <div style={{ fontWeight: 500 }}>{template}</div>
+                          <div style={{ fontSize: '10px', color: '#808080' }}>
+                            {info?.description?.substring(0, 40) || 'Device template'}
+                            {selectedCabinetId && (
+                              <span style={{ color: '#4fc3f7' }}> → {cabinets.find(c => c.instanceId === selectedCabinetId)?.tagName}</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Stats */}
-          <div style={{ 
-            padding: '16px', 
-            borderTop: '1px solid #3c3c3c',
-            backgroundColor: '#2d2d2d',
-          }}>
-            <div style={{ fontSize: '11px', color: '#808080', marginBottom: '8px' }}>PROJECT STATS</div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+          <div style={{ flex: 1 }} />
+          <div style={styles.statsPanel}>
+            <div style={{ marginBottom: '8px', fontWeight: 600, color: '#808080' }}>PROJECT STATS</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <span>Cabinets:</span>
+              <span style={{ color: '#9c27b0', fontWeight: 600 }}>{cabinets.length}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span>Devices:</span>
               <span style={{ color: '#4fc3f7', fontWeight: 600 }}>{devices.length}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span>Connections:</span>
               <span style={{ color: '#81c784', fontWeight: 600 }}>{connections.length}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Signals:</span>
               <span style={{ color: '#ffb74d', fontWeight: 600 }}>
-                {devices.reduce((sum, d) => sum + d.signals.length, 0)}
+                {cabinets.reduce((sum, c) => sum + c.signals.length, 0) + 
+                 devices.reduce((sum, d) => sum + d.signals.length, 0)}
               </span>
             </div>
           </div>
@@ -948,212 +1281,363 @@ const App: React.FC = () => {
         <div style={styles.workArea}>
           {/* Tabs */}
           <div style={styles.tabs}>
-            {(['devices', 'connections', 'audit', 'users', 'compare'] as const).map(tab => (
+            {[
+              { key: 'hierarchy' as const, label: '🏗️ Hierarchy', count: cabinets.length + devices.length },
+              { key: 'devices' as const, label: '🔧 All Devices', count: devices.length },
+              { key: 'connections' as const, label: '🔗 Connections', count: connections.length },
+              { key: 'audit' as const, label: '📋 Audit Log', count: undefined },
+              { key: 'users' as const, label: '👥 Users', count: undefined },
+            ].map(tab => (
               <div
-                key={tab}
-                onClick={() => setActiveTab(tab)}
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
                 style={{
                   ...styles.tab,
-                  ...(activeTab === tab ? styles.tabActive : {}),
+                  ...(activeTab === tab.key ? styles.tabActive : {}),
                 }}
               >
-                {tab === 'devices' && '🔧 Devices'}
-                {tab === 'connections' && '🔗 Connections'}
-                {tab === 'audit' && '📋 Audit Log'}
-                {tab === 'users' && '👥 Users'}
-                {tab === 'compare' && `🔄 Compare ${comparisonResult ? `(${comparisonResult.summary.totalChanges})` : ''}`}
+                {tab.label} {tab.count !== undefined && `(${tab.count})`}
               </div>
             ))}
           </div>
 
           {/* Content */}
           <div style={styles.content}>
-            {/* DEVICES TAB */}
-            {activeTab === 'devices' && (
+            
+            {/* ==================== HIERARCHY TAB ==================== */}
+            {activeTab === 'hierarchy' && (
               <div>
-                {devices.length === 0 ? (
-                  <div style={{ 
-                    textAlign: 'center', 
-                    padding: '60px',
-                    color: '#808080',
-                  }}>
-                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>📦</div>
-                    <div style={{ fontSize: '16px', marginBottom: '8px' }}>No devices yet</div>
-                    <div style={{ fontSize: '13px' }}>Click a template in the sidebar to add a device</div>
+                {cabinets.length === 0 && standaloneDevices.length === 0 ? (
+                  <div style={styles.emptyState}>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>🏗️</div>
+                    <div style={{ fontSize: '16px', marginBottom: '8px' }}>No cabinets or devices yet</div>
+                    <div style={{ fontSize: '13px', color: '#606060' }}>
+                      Use the sidebar to add cabinets and devices to your project
+                    </div>
                   </div>
                 ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px' }}>
-                    {devices.map(device => (
-                      <div
-                        key={device.instanceId}
-                        style={{
-                          ...styles.deviceCard,
-                          ...(selectedDeviceId === device.instanceId ? styles.deviceCardSelected : {}),
-                        }}
-                        onClick={() => setSelectedDeviceId(device.instanceId)}
-                      >
-                        {/* Device Header */}
-                        <div style={styles.cardHeader}>
-                          <div>
-                            <span style={{ fontSize: '14px', fontWeight: 600 }}>{device.tagName}</span>
-                            <span style={{ 
-                              marginLeft: '10px', 
-                              fontSize: '10px', 
-                              color: '#808080',
-                              padding: '2px 8px',
-                              backgroundColor: '#252526',
-                              borderRadius: '10px',
-                            }}>
-                              {device.template.category}
-                            </span>
-                          </div>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleDeleteDevice(device.instanceId); }}
-                            style={{ ...styles.button, ...styles.buttonDanger, padding: '4px 10px', fontSize: '11px' }}
+                  <div>
+                    {/* Cabinets with their devices */}
+                    {cabinets.map(cabinet => {
+                      const isExpanded = expandedCabinets.has(cabinet.instanceId);
+                      const cabinetDevices = devices.filter(d => 
+                        cabinet.deviceIds.includes(d.instanceId)
+                      );
+
+                      return (
+                        <div
+                          key={cabinet.instanceId}
+                          style={{
+                            ...styles.cabinetCard,
+                            ...(selectedCabinetId === cabinet.instanceId ? styles.cabinetCardSelected : {}),
+                            borderLeftColor: cabinet.template.color,
+                            borderLeftWidth: '4px',
+                          }}
+                        >
+                          {/* Cabinet Header */}
+                          <div 
+                            style={{
+                              ...styles.cabinetHeader,
+                              backgroundColor: selectedCabinetId === cabinet.instanceId ? '#094771' : '#3c3c3c',
+                            }}
+                            onClick={() => {
+                              setSelectedCabinetId(cabinet.instanceId);
+                              setSelectedDeviceId(null);
+                            }}
                           >
-                            🗑️
-                          </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <span
+                                style={{ cursor: 'pointer', fontSize: '12px' }}
+                                onClick={(e) => { e.stopPropagation(); toggleCabinetExpanded(cabinet.instanceId); }}
+                              >
+                                {isExpanded ? '▼' : '▶'}
+                              </span>
+                              <span style={{ fontSize: '16px' }}>{cabinet.template.icon}</span>
+                              <div>
+                                <div style={{ fontWeight: 600, fontSize: '14px' }}>{cabinet.tagName}</div>
+                                <div style={{ fontSize: '11px', color: '#a0a0a0' }}>
+                                  {getCabinetCategoryLabel(cabinet.template.category)} • {cabinetDevices.length} devices • {cabinet.signals.length} signals
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '6px' }}>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleAddDevice(deviceTemplates[0], cabinet.instanceId); }}
+                                style={{ ...styles.button, ...styles.buttonSmall, ...styles.buttonPrimary }}
+                                title="Add device to this cabinet"
+                              >
+                                + Device
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDeleteCabinet(cabinet.instanceId); }}
+                                style={{ ...styles.button, ...styles.buttonSmall, ...styles.buttonDanger }}
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Cabinet Signals */}
+                          {isExpanded && cabinet.signals.length > 0 && (
+                            <div style={{ 
+                              padding: '8px 12px', 
+                              backgroundColor: '#252526',
+                              borderBottom: '1px solid #3c3c3c',
+                            }}>
+                              <div style={{ fontSize: '10px', color: '#808080', marginBottom: '6px' }}>
+                                CABINET SIGNALS
+                              </div>
+                              <SignalList
+                                signals={cabinet.signals}
+                                onSignalClick={(sigId) => handleSignalClick('', sigId, cabinet.instanceId)}
+                                pendingSignalId={pendingConnection?.signalId}
+                                compact
+                              />
+                            </div>
+                          )}
+
+                          {/* Devices inside cabinet */}
+                          {isExpanded && (
+                            <div style={{ padding: '8px 0' }}>
+                              {cabinetDevices.length === 0 ? (
+                                <div style={{ 
+                                  padding: '16px', 
+                                  textAlign: 'center', 
+                                  color: '#606060',
+                                  fontSize: '12px',
+                                }}>
+                                  No devices in this cabinet. Click "+ Device" to add one.
+                                </div>
+                              ) : (
+                                cabinetDevices.map(device => (
+                                  <div
+                                    key={device.instanceId}
+                                    style={{
+                                      ...styles.deviceCard,
+                                      ...(selectedDeviceId === device.instanceId ? styles.deviceCardSelected : {}),
+                                    }}
+                                    onClick={() => {
+                                      setSelectedDeviceId(device.instanceId);
+                                      setSelectedCabinetId(cabinet.instanceId);
+                                    }}
+                                  >
+                                    <div style={{
+                                      padding: '10px 12px',
+                                      backgroundColor: selectedDeviceId === device.instanceId ? '#094771' : '#3c3c3c',
+                                      display: 'flex',
+                                      justifyContent: 'space-between',
+                                      alignItems: 'center',
+                                    }}>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <span>{device.template.icon}</span>
+                                        <div>
+                                          <div style={{ fontWeight: 500, fontSize: '13px' }}>{device.tagName}</div>
+                                          <div style={{ fontSize: '10px', color: '#808080' }}>
+                                            {device.template.category} • {device.signals.length} signals
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div style={{ display: 'flex', gap: '4px' }}>
+                                        <button
+                                          onClick={(e) => { e.stopPropagation(); handleMoveDeviceToCabinet(device.instanceId, null); }}
+                                          style={{ ...styles.button, ...styles.buttonSmall }}
+                                          title="Move to standalone"
+                                        >
+                                          ↗
+                                        </button>
+                                        <button
+                                          onClick={(e) => { e.stopPropagation(); handleDeleteDevice(device.instanceId); }}
+                                          style={{ ...styles.button, ...styles.buttonSmall, ...styles.buttonDanger }}
+                                        >
+                                          🗑️
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <SignalList
+                                      signals={device.signals}
+                                      onSignalClick={(sigId) => handleSignalClick(device.instanceId, sigId, cabinet.instanceId)}
+                                      pendingSignalId={pendingConnection?.signalId}
+                                      compact
+                                    />
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          )}
                         </div>
+                      );
+                    })}
 
-                        {/* Signals */}
-                        <div style={{ padding: '12px', display: 'flex', gap: '12px' }}>
-                          {/* Inputs */}
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: '10px', color: '#4fc3f7', marginBottom: '8px', fontWeight: 600 }}>
-                              ⬇ INPUTS ({device.signals.filter(s => s.direction === SignalDirection.INPUT).length})
-                            </div>
-                            {device.signals
-                              .filter(s => s.direction === SignalDirection.INPUT)
-                              .map(signal => (
-                                <div
-                                  key={signal.id}
-                                  onClick={(e) => { e.stopPropagation(); handleSignalClick(device.instanceId, signal.id); }}
-                                  style={{
-                                    ...styles.signalItem,
-                                    ...styles.signalInput,
-                                    ...(signal.isConnected ? { opacity: 0.6 } : {}),
-                                    ...(pendingConnection?.signalId === signal.id ? { backgroundColor: 'rgba(255,152,0,0.4)' } : {}),
-                                  }}
-                                >
-                                  <span>{signal.tagName}</span>
-                                  <span style={{ fontSize: '10px', color: '#808080' }}>
-                                    {signal.type} {signal.isConnected && '✓'}
-                                  </span>
-                                </div>
-                              ))}
-                          </div>
-
-                          {/* Outputs */}
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: '10px', color: '#ffb74d', marginBottom: '8px', fontWeight: 600 }}>
-                              ⬆ OUTPUTS ({device.signals.filter(s => s.direction === SignalDirection.OUTPUT).length})
-                            </div>
-                            {device.signals
-                              .filter(s => s.direction === SignalDirection.OUTPUT)
-                              .map(signal => (
-                                <div
-                                  key={signal.id}
-                                  onClick={(e) => { e.stopPropagation(); handleSignalClick(device.instanceId, signal.id); }}
-                                  style={{
-                                    ...styles.signalItem,
-                                    ...styles.signalOutput,
-                                    ...(pendingConnection?.signalId === signal.id ? { backgroundColor: 'rgba(255,152,0,0.4)' } : {}),
-                                  }}
-                                >
-                                  <span>{signal.tagName}</span>
-                                  <span style={{ fontSize: '10px', color: '#808080' }}>{signal.type}</span>
-                                </div>
-                              ))}
-                          </div>
+                    {/* Standalone Devices */}
+                    {standaloneDevices.length > 0 && (
+                      <div style={{ marginTop: '24px' }}>
+                        <div style={{ 
+                          fontSize: '12px', 
+                          color: '#808080', 
+                          marginBottom: '12px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '1px',
+                        }}>
+                          📦 Standalone Devices ({standaloneDevices.length})
                         </div>
-
-                        {/* Bidirectional Signals */}
-                        {device.signals.filter(s => s.direction === SignalDirection.BIDIRECTIONAL).length > 0 && (
-                          <div style={{ padding: '0 12px 12px' }}>
-                            <div style={{ fontSize: '10px', color: '#b39ddb', marginBottom: '8px', fontWeight: 600 }}>
-                              ↔ BIDIRECTIONAL
-                            </div>
-                            {device.signals
-                              .filter(s => s.direction === SignalDirection.BIDIRECTIONAL)
-                              .map(signal => (
-                                <div
-                                  key={signal.id}
-                                  onClick={(e) => { e.stopPropagation(); handleSignalClick(device.instanceId, signal.id); }}
-                                  style={{
-                                    ...styles.signalItem,
-                                    ...styles.signalBidirectional,
-                                  }}
-                                >
-                                  <span>{signal.tagName}</span>
-                                  <span style={{ fontSize: '10px', color: '#808080' }}>{signal.type}</span>
+                        {standaloneDevices.map(device => (
+                          <div
+                            key={device.instanceId}
+                            style={{
+                              ...styles.deviceCardStandalone,
+                              ...(selectedDeviceId === device.instanceId ? styles.deviceCardSelected : {}),
+                            }}
+                            onClick={() => {
+                              setSelectedDeviceId(device.instanceId);
+                              setSelectedCabinetId(null);
+                            }}
+                          >
+                            <div style={{
+                              padding: '12px 16px',
+                              backgroundColor: selectedDeviceId === device.instanceId ? '#094771' : '#3c3c3c',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <span style={{ fontSize: '18px' }}>{device.template.icon}</span>
+                                <div>
+                                  <div style={{ fontWeight: 600, fontSize: '14px' }}>{device.tagName}</div>
+                                  <div style={{ fontSize: '11px', color: '#a0a0a0' }}>
+                                    {device.template.category} • {device.signals.length} signals
+                                  </div>
                                 </div>
-                              ))}
+                              </div>
+                              <div style={{ display: 'flex', gap: '6px' }}>
+                                {cabinets.length > 0 && (
+                                  <select
+                                    onClick={(e) => e.stopPropagation()}
+                                    onChange={(e) => {
+                                      if (e.target.value) {
+                                        handleMoveDeviceToCabinet(device.instanceId, e.target.value);
+                                      }
+                                    }}
+                                    style={{ 
+                                      ...styles.button, 
+                                      ...styles.buttonSmall,
+                                      backgroundColor: '#4c4c4c',
+                                      cursor: 'pointer',
+                                    }}
+                                    value=""
+                                  >
+                                    <option value="">Move to...</option>
+                                    {cabinets.map(c => (
+                                      <option key={c.instanceId} value={c.instanceId}>
+                                        {c.tagName}
+                                      </option>
+                                    ))}
+                                  </select>
+                                )}
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleDeleteDevice(device.instanceId); }}
+                                  style={{ ...styles.button, ...styles.buttonSmall, ...styles.buttonDanger }}
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            </div>
+                            <SignalList
+                              signals={device.signals}
+                              onSignalClick={(sigId) => handleSignalClick(device.instanceId, sigId)}
+                              pendingSignalId={pendingConnection?.signalId}
+                            />
                           </div>
-                        )}
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
             )}
 
-            {/* CONNECTIONS TAB */}
-            {activeTab === 'connections' && (
+            {/* ==================== ALL DEVICES TAB ==================== */}
+            {activeTab === 'devices' && (
               <div>
-                {connections.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '60px', color: '#808080' }}>
-                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔗</div>
-                    <div style={{ fontSize: '16px', marginBottom: '8px' }}>No connections yet</div>
-                    <div style={{ fontSize: '13px' }}>Enable "Connect Mode" and click signals to create connections</div>
+                {devices.length === 0 ? (
+                  <div style={styles.emptyState}>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>📦</div>
+                    <div style={{ fontSize: '16px', marginBottom: '8px' }}>No devices yet</div>
+                    <div style={{ fontSize: '13px', color: '#606060' }}>
+                      Click a device template in the sidebar to add devices
+                    </div>
                   </div>
                 ) : (
                   <table style={styles.table}>
                     <thead>
                       <tr>
-                        <th style={styles.th}>Source Device</th>
-                        <th style={styles.th}>Source Signal</th>
-                        <th style={styles.th}></th>
-                        <th style={styles.th}>Dest Device</th>
-                        <th style={styles.th}>Dest Signal</th>
-                        <th style={styles.th}>Status</th>
+                        <th style={styles.th}>Tag Name</th>
+                        <th style={styles.th}>Type</th>
+                        <th style={styles.th}>Cabinet</th>
+                        <th style={styles.th}>Signals</th>
+                        <th style={styles.th}>Connections</th>
                         <th style={styles.th}>Created</th>
                         <th style={styles.th}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {connections.map(conn => {
-                        const srcDev = devices.find(d => d.instanceId === conn.sourceDeviceId);
-                        const dstDev = devices.find(d => d.instanceId === conn.destinationDeviceId);
-                        const srcSig = srcDev?.signals.find(s => s.id === conn.sourceSignalId);
-                        const dstSig = dstDev?.signals.find(s => s.id === conn.destinationSignalId);
-
+                      {devices.map(device => {
+                        const cabinet = cabinets.find(c => c.deviceIds.includes(device.instanceId));
+                        const deviceConnections = connections.filter(
+                          c => c.sourceDeviceId === device.instanceId || c.destinationDeviceId === device.instanceId
+                        );
+                        
                         return (
-                          <tr key={conn.id}>
-                            <td style={styles.td}>{srcDev?.tagName || 'Unknown'}</td>
+                          <tr 
+                            key={device.instanceId}
+                            style={{ 
+                              backgroundColor: selectedDeviceId === device.instanceId ? '#094771' : 'transparent',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => setSelectedDeviceId(device.instanceId)}
+                          >
                             <td style={styles.td}>
-                              <span style={{ color: '#ffb74d' }}>{srcSig?.tagName || 'Unknown'}</span>
-                            </td>
-                            <td style={{ ...styles.td, textAlign: 'center', fontSize: '16px' }}>→</td>
-                            <td style={styles.td}>{dstDev?.tagName || 'Unknown'}</td>
-                            <td style={styles.td}>
-                              <span style={{ color: '#4fc3f7' }}>{dstSig?.tagName || 'Unknown'}</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span>{device.template.icon}</span>
+                                                                <span style={{ fontWeight: 600 }}>{device.tagName}</span>
+                              </div>
                             </td>
                             <td style={styles.td}>
                               <span style={{
                                 ...styles.badge,
-                                backgroundColor: getStatusColor(conn.status),
+                                backgroundColor: device.template.color || '#3c3c3c',
                                 color: '#ffffff',
                               }}>
-                                {conn.status}
+                                {device.template.category}
                               </span>
                             </td>
                             <td style={styles.td}>
-                              {conn.createdAt.toLocaleString()}
+                              {cabinet ? (
+                                <span style={{ color: '#9c27b0' }}>{cabinet.tagName}</span>
+                              ) : (
+                                <span style={{ color: '#606060' }}>Standalone</span>
+                              )}
+                            </td>
+                            <td style={styles.td}>
+                              <span style={{ color: '#4fc3f7' }}>
+                                {device.signals.filter((s: SignalPoint) => s.direction === SignalDirection.INPUT).length} IN
+                              </span>
+                              {' / '}
+                              <span style={{ color: '#ffb74d' }}>
+                                {device.signals.filter((s: SignalPoint) => s.direction === SignalDirection.OUTPUT).length} OUT
+                              </span>
+                            </td>
+                            <td style={styles.td}>
+                              <span style={{ color: deviceConnections.length > 0 ? '#81c784' : '#606060' }}>
+                                {deviceConnections.length}
+                              </span>
+                            </td>
+                            <td style={styles.td}>
+                              {device.createdAt.toLocaleDateString()}
                             </td>
                             <td style={styles.td}>
                               <button
-                                onClick={() => handleDeleteConnection(conn.id)}
-                                style={{ ...styles.button, ...styles.buttonDanger, padding: '4px 10px', fontSize: '11px' }}
+                                onClick={(e) => { e.stopPropagation(); handleDeleteDevice(device.instanceId); }}
+                                style={{ ...styles.button, ...styles.buttonSmall, ...styles.buttonDanger }}
                               >
                                 Delete
                               </button>
@@ -1167,7 +1651,94 @@ const App: React.FC = () => {
               </div>
             )}
 
-            {/* AUDIT LOG TAB */}
+            {/* ==================== CONNECTIONS TAB ==================== */}
+            {activeTab === 'connections' && (
+              <div>
+                {connections.length === 0 ? (
+                  <div style={styles.emptyState}>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔗</div>
+                    <div style={{ fontSize: '16px', marginBottom: '8px' }}>No connections yet</div>
+                    <div style={{ fontSize: '13px', color: '#606060' }}>
+                      Enable "Connect Mode" in the toolbar and click signals to create connections
+                    </div>
+                  </div>
+                ) : (
+                  <table style={styles.table}>
+                    <thead>
+                      <tr>
+                        <th style={styles.th}>Source Device</th>
+                        <th style={styles.th}>Source Signal</th>
+                        <th style={styles.th}></th>
+                        <th style={styles.th}>Dest Device</th>
+                        <th style={styles.th}>Dest Signal</th>
+                        <th style={styles.th}>Wire Type</th>
+                        <th style={styles.th}>Status</th>
+                        <th style={styles.th}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {connections.map(conn => {
+                        const srcDevice = devices.find(d => d.instanceId === conn.sourceDeviceId);
+                        const srcCabinet = cabinets.find(c => c.instanceId === conn.sourceDeviceId);
+                        const srcSignal = srcDevice?.signals.find((s: SignalPoint) => s.id === conn.sourceSignalId) ||
+                                         srcCabinet?.signals.find((s: SignalPoint) => s.id === conn.sourceSignalId);
+
+                        const dstDevice = devices.find(d => d.instanceId === conn.destinationDeviceId);
+                        const dstCabinet = cabinets.find(c => c.instanceId === conn.destinationDeviceId);
+                        const dstSignal = dstDevice?.signals.find((s: SignalPoint) => s.id === conn.destinationSignalId) ||
+                                         dstCabinet?.signals.find((s: SignalPoint) => s.id === conn.destinationSignalId);
+
+                        return (
+                          <tr key={conn.id}>
+                            <td style={styles.td}>
+                              <span style={{ color: srcCabinet ? '#9c27b0' : '#4fc3f7' }}>
+                                {srcDevice?.tagName || srcCabinet?.tagName || 'Unknown'}
+                              </span>
+                            </td>
+                            <td style={styles.td}>
+                              <span style={{ color: '#ffb74d' }}>{srcSignal?.tagName || 'Unknown'}</span>
+                            </td>
+                            <td style={{ ...styles.td, textAlign: 'center', fontSize: '18px', color: '#81c784' }}>
+                              →
+                            </td>
+                            <td style={styles.td}>
+                              <span style={{ color: dstCabinet ? '#9c27b0' : '#4fc3f7' }}>
+                                {dstDevice?.tagName || dstCabinet?.tagName || 'Unknown'}
+                              </span>
+                            </td>
+                            <td style={styles.td}>
+                              <span style={{ color: '#4fc3f7' }}>{dstSignal?.tagName || 'Unknown'}</span>
+                            </td>
+                            <td style={styles.td}>
+                              <span style={{ fontSize: '11px', color: '#a0a0a0' }}>{conn.wireType}</span>
+                            </td>
+                            <td style={styles.td}>
+                              <span style={{
+                                ...styles.badge,
+                                backgroundColor: getStatusColor(conn.status),
+                                color: '#ffffff',
+                              }}>
+                                {conn.status}
+                              </span>
+                            </td>
+                            <td style={styles.td}>
+                              <button
+                                onClick={() => handleDeleteConnection(conn.id)}
+                                style={{ ...styles.button, ...styles.buttonSmall, ...styles.buttonDanger }}
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+
+            {/* ==================== AUDIT LOG TAB ==================== */}
             {activeTab === 'audit' && (
               <div>
                 <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1179,48 +1750,68 @@ const App: React.FC = () => {
                     🔄 Refresh
                   </button>
                 </div>
-                <table style={styles.table}>
-                  <thead>
-                    <tr>
-                      <th style={styles.th}>Timestamp</th>
-                      <th style={styles.th}>User</th>
-                      <th style={styles.th}>Action</th>
-                      <th style={styles.th}>Entity</th>
-                      <th style={styles.th}>Description</th>
-                      <th style={styles.th}>Severity</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {auditEntries.slice(0, 100).map(entry => (
-                      <tr key={entry.id}>
-                        <td style={styles.td}>{entry.timestamp.toLocaleString()}</td>
-                        <td style={styles.td}>{entry.username}</td>
-                        <td style={styles.td}>
-                          <code style={{ backgroundColor: '#3c3c3c', padding: '2px 6px', borderRadius: '3px', fontSize: '11px' }}>
-                            {entry.action}
-                          </code>
-                        </td>
-                        <td style={styles.td}>
-                          <span style={{ color: '#4fc3f7' }}>{entry.entityName}</span>
-                        </td>
-                        <td style={styles.td}>{entry.description}</td>
-                        <td style={styles.td}>
-                          <span style={{
-                            ...styles.badge,
-                            backgroundColor: getSeverityColor(entry.severity),
-                            color: '#ffffff',
-                          }}>
-                            {entry.severity}
-                          </span>
-                        </td>
+                {auditEntries.length === 0 ? (
+                  <div style={styles.emptyState}>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>📋</div>
+                    <div style={{ fontSize: '16px', marginBottom: '8px' }}>No audit entries yet</div>
+                    <div style={{ fontSize: '13px', color: '#606060' }}>
+                      Actions will be logged here as you work
+                    </div>
+                  </div>
+                ) : (
+                  <table style={styles.table}>
+                    <thead>
+                      <tr>
+                        <th style={styles.th}>Timestamp</th>
+                        <th style={styles.th}>User</th>
+                        <th style={styles.th}>Action</th>
+                        <th style={styles.th}>Entity</th>
+                        <th style={styles.th}>Description</th>
+                        <th style={styles.th}>Severity</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {auditEntries.slice(0, 100).map(entry => (
+                        <tr key={entry.id}>
+                          <td style={styles.td}>
+                            <span style={{ fontSize: '11px' }}>{entry.timestamp.toLocaleString()}</span>
+                          </td>
+                          <td style={styles.td}>{entry.username}</td>
+                          <td style={styles.td}>
+                            <code style={{ 
+                              backgroundColor: '#3c3c3c', 
+                              padding: '2px 6px', 
+                              borderRadius: '3px', 
+                              fontSize: '10px' 
+                            }}>
+                              {entry.action}
+                            </code>
+                          </td>
+                          <td style={styles.td}>
+                            <span style={{ color: '#4fc3f7' }}>{entry.entityName}</span>
+                            <span style={{ color: '#606060', fontSize: '10px', marginLeft: '6px' }}>
+                              ({entry.entityType})
+                            </span>
+                          </td>
+                          <td style={styles.td}>{entry.description}</td>
+                          <td style={styles.td}>
+                            <span style={{
+                              ...styles.badge,
+                              backgroundColor: getSeverityColor(entry.severity),
+                              color: '#ffffff',
+                            }}>
+                              {entry.severity}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             )}
 
-            {/* USERS TAB */}
+            {/* ==================== USERS TAB ==================== */}
             {activeTab === 'users' && (
               <div>
                 <h3 style={{ marginTop: 0 }}>👥 User Management</h3>
@@ -1245,7 +1836,9 @@ const App: React.FC = () => {
                         <td style={styles.td}>
                           <span style={{
                             ...styles.badge,
-                            backgroundColor: user.role === 'ADMIN' ? '#ff8c00' : '#0078d4',
+                            backgroundColor: user.role === 'ADMIN' ? '#ff8c00' : 
+                                           user.role === 'ENGINEER' ? '#0078d4' :
+                                           user.role === 'REVIEWER' ? '#107c10' : '#606060',
                             color: '#ffffff',
                           }}>
                             {getRoleLabel(user.role)}
@@ -1261,7 +1854,11 @@ const App: React.FC = () => {
                             {user.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
-                        <td style={styles.td}>{user.lastLogin?.toLocaleString() || 'Never'}</td>
+                        <td style={styles.td}>
+                          <span style={{ fontSize: '11px' }}>
+                            {user.lastLogin?.toLocaleString() || 'Never'}
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -1269,100 +1866,6 @@ const App: React.FC = () => {
               </div>
             )}
 
-            {/* COMPARE TAB */}
-            {activeTab === 'compare' && (
-              <div>
-                {!comparisonResult ? (
-                  <div style={{ textAlign: 'center', padding: '60px', color: '#808080' }}>
-                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
-                    <div style={{ fontSize: '16px', marginBottom: '8px' }}>No comparison active</div>
-                    <div style={{ fontSize: '13px' }}>Click "Import & Compare" to compare an exported file with current project</div>
-                  </div>
-                ) : (
-                  <div>
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      marginBottom: '20px',
-                      padding: '16px',
-                      backgroundColor: '#2d2d2d',
-                      borderRadius: '8px',
-                    }}>
-                      <div>
-                        <h3 style={{ margin: '0 0 8px 0' }}>📊 Comparison Results</h3>
-                        <div style={{ fontSize: '13px', color: '#808080' }}>
-                          {comparisonResult.summary.totalChanges} changes found: 
-                          <span style={{ color: '#81c784', marginLeft: '8px' }}>+{comparisonResult.summary.additions} added</span>
-                          <span style={{ color: '#ffb74d', marginLeft: '8px' }}>~{comparisonResult.summary.modifications} modified</span>
-                          <span style={{ color: '#ef5350', marginLeft: '8px' }}>-{comparisonResult.summary.deletions} deleted</span>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button 
-                          onClick={handleAcceptAllChanges}
-                          style={{ ...styles.button, ...styles.buttonSuccess }}
-                        >
-                          ✓ Accept All
-                        </button>
-                        <button 
-                          onClick={handleRejectAllChanges}
-                          style={{ ...styles.button, ...styles.buttonDanger }}
-                        >
-                          ✕ Reject All
-                        </button>
-                      </div>
-                    </div>
-
-                    <table style={styles.table}>
-                      <thead>
-                        <tr>
-                          <th style={styles.th}>Type</th>
-                          <th style={styles.th}>Category</th>
-                          <th style={styles.th}>Entity</th>
-                          <th style={styles.th}>Description</th>
-                          <th style={styles.th}>Severity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {comparisonResult.changes.map(change => (
-                          <tr key={change.id}>
-                            <td style={styles.td}>
-                              <span style={{
-                                ...styles.badge,
-                                backgroundColor: getChangeTypeColor(change.changeType),
-                                color: '#ffffff',
-                              }}>
-                                {change.changeType}
-                              </span>
-                            </td>
-                            <td style={styles.td}>{change.category}</td>
-                            <td style={styles.td}>
-                              <span style={{ color: '#4fc3f7' }}>{change.entityName}</span>
-                              {change.parentName && (
-                                <span style={{ color: '#808080', fontSize: '11px' }}> in {change.parentName}</span>
-                              )}
-                            </td>
-                            <td style={styles.td}>{change.description}</td>
-                            <td style={styles.td}>
-                              <span style={{
-                                padding: '2px 8px',
-                                borderRadius: '10px',
-                                fontSize: '10px',
-                                backgroundColor: change.severity === 'high' ? '#d13438' : change.severity === 'medium' ? '#ca5010' : '#3c3c3c',
-                                color: '#ffffff',
-                              }}>
-                                {change.severity}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -1375,8 +1878,10 @@ const App: React.FC = () => {
           Status: {project?.status || '-'}
         </span>
         <span>
-          {connectionMode ? '🔗 Connection Mode Active' : '✓ Ready'} | 
-          {new Date().toLocaleTimeString()}
+          {connectionMode && '🔗 Connect Mode | '}
+          {selectedCabinetId && `Cabinet: ${selectedCabinet?.tagName} | `}
+          {selectedDeviceId && `Device: ${selectedDevice?.tagName} | `}
+          ✓ Ready | {new Date().toLocaleTimeString()}
         </span>
       </div>
     </div>
