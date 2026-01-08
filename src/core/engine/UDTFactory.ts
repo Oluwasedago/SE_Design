@@ -17,6 +17,15 @@ import { SignalFactory } from './SignalFactory';
 // PREDEFINED DEVICE TEMPLATES
 // ============================================================================
 
+interface SignalDefinition {
+  nameSuffix: string;
+  description: string;
+  type: SignalType;
+  engineeringUnit?: string;
+  rangeMin?: number;
+  rangeMax?: number;
+}
+
 interface TemplateDefinition {
   name: string;
   manufacturer: string;
@@ -28,14 +37,7 @@ interface TemplateDefinition {
   width: number;
   height: number;
   protocols: string[];
-  signals: Array<{
-    nameSuffix: string;
-    description: string;
-    type: SignalType;
-    engineeringUnit?: string;
-    rangeMin?: number;
-    rangeMax?: number;
-  }>;
+  signals: SignalDefinition[];
 }
 
 const TEMPLATE_DEFINITIONS: Record<string, TemplateDefinition> = {
@@ -226,7 +228,6 @@ export class UDTFactory {
 
   /**
    * Create a UDT template from a predefined type
-   * ✅ FIXED: Using SignalFactory.createSignal() instead of this.createSignal()
    */
   static createFromTemplate(templateType: string, tagPrefix: string, createdBy: string): UDTTemplate {
     const templateDef = TEMPLATE_DEFINITIONS[templateType];
@@ -238,8 +239,8 @@ export class UDTFactory {
     const templateId = uuidv4();
     const now = new Date();
 
-    // ✅ FIX: Create signals using SignalFactory (not this.createSignal)
-    const signals: SignalPoint[] = templateDef.signals.map(signalDef => {
+    // Create signals using SignalFactory
+    const signals: SignalPoint[] = templateDef.signals.map((signalDef: SignalDefinition) => {
       return SignalFactory.createSignal({
         tagName: `${tagPrefix}_${signalDef.nameSuffix}`,
         description: signalDef.description,
@@ -339,7 +340,7 @@ export class UDTFactory {
     const now = new Date();
 
     // Clone signals with new IDs and updated tag names
-    const instanceSignals: SignalPoint[] = template.signals.map(signal => ({
+    const instanceSignals: SignalPoint[] = template.signals.map((signal: SignalPoint) => ({
       ...signal,
       id: uuidv4(),
       tagName: signal.tagName.replace(template.name.toUpperCase(), tagName.toUpperCase()),
@@ -383,7 +384,7 @@ export class UDTFactory {
     const now = new Date();
 
     // Clone signals with new IDs
-    const clonedSignals: SignalPoint[] = instance.signals.map(signal => ({
+    const clonedSignals: SignalPoint[] = instance.signals.map((signal: SignalPoint) => ({
       ...signal,
       id: uuidv4(),
       tagName: signal.tagName.replace(instance.tagName, newTagName),
@@ -411,56 +412,6 @@ export class UDTFactory {
         ...instance.metadata,
         clonedFrom: instance.instanceId,
       },
-    };
-  }
-
-  /**
-   * Add a signal to a template
-   */
-  static addSignalToTemplate(
-    template: UDTTemplate,
-    signalParams: {
-      nameSuffix: string;
-      description: string;
-      type: SignalType;
-      engineeringUnit?: string;
-      rangeMin?: number;
-      rangeMax?: number;
-    },
-    createdBy: string
-  ): UDTTemplate {
-    const newSignal = SignalFactory.createSignal({
-      tagName: `${template.name.toUpperCase()}_${signalParams.nameSuffix}`,
-      description: signalParams.description,
-      type: signalParams.type,
-      direction: SIGNAL_DIRECTION_MAP[signalParams.type],
-      engineeringUnit: signalParams.engineeringUnit,
-      rangeMin: signalParams.rangeMin,
-      rangeMax: signalParams.rangeMax,
-      createdBy,
-    });
-
-    return {
-      ...template,
-      signals: [...template.signals, newSignal],
-      updatedAt: new Date(),
-      updatedBy: createdBy,
-    };
-  }
-
-  /**
-   * Remove a signal from a template
-   */
-  static removeSignalFromTemplate(
-    template: UDTTemplate,
-    signalId: string,
-    updatedBy: string
-  ): UDTTemplate {
-    return {
-      ...template,
-      signals: template.signals.filter(s => s.id !== signalId),
-      updatedAt: new Date(),
-      updatedBy,
     };
   }
 }

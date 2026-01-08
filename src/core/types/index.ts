@@ -136,7 +136,7 @@ export interface AuditEntry {
   username: string;
   action: AuditAction;
   severity: AuditSeverity;
-  entityType: 'PROJECT' | 'DEVICE' | 'SIGNAL' | 'CONNECTION' | 'USER' | 'SYSTEM';
+  entityType: 'PROJECT' | 'DEVICE' | 'SIGNAL' | 'CONNECTION' | 'USER' | 'SYSTEM' | 'CABINET';
   entityId: string;
   entityName: string;
   description: string;
@@ -546,4 +546,132 @@ export function getSeverityColor(severity: AuditSeverity): string {
     [AuditSeverity.CRITICAL]: '#ef5350',
   };
   return colors[severity] || '#9e9e9e';
+}
+// ============================================================================
+// SECTION 9: CABINET/PANEL TYPES
+// ============================================================================
+
+/**
+ * Cabinet/Panel category types
+ */
+export enum CabinetCategory {
+  ELECTRICAL_PANEL = 'ELECTRICAL_PANEL',
+  MCC_SECTION = 'MCC_SECTION',
+  CONTROL_CABINET = 'CONTROL_CABINET',
+  JUNCTION_BOX = 'JUNCTION_BOX',
+  INSTRUMENT_CABINET = 'INSTRUMENT_CABINET',
+  OUTDOOR_ENCLOSURE = 'OUTDOOR_ENCLOSURE',
+  PLC_RACK = 'PLC_RACK',
+  IO_CABINET = 'IO_CABINET',
+  MARSHALLING_CABINET = 'MARSHALLING_CABINET',
+}
+
+/**
+ * Cabinet status
+ */
+export enum CabinetStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  MAINTENANCE = 'MAINTENANCE',
+  ALARM = 'ALARM',
+  OFFLINE = 'OFFLINE',
+}
+
+/**
+ * Cabinet template definition
+ */
+export interface CabinetTemplate {
+  id: string;
+  name: string;
+  category: CabinetCategory;
+  description: string;
+  icon: string;
+  color: string;
+  width: number;
+  height: number;
+  depth: number;
+  defaultProperties: {
+    ipRating?: string;
+    material?: string;
+    voltage?: number;
+    busbarRating?: number;
+    coolingType?: string;
+    [key: string]: unknown;
+  };
+  defaultSignals: Array<{
+    nameSuffix: string;
+    description: string;
+    type: SignalType;
+  }>;
+  maxDevices?: number;
+  createdAt: Date;
+  createdBy: string;
+  updatedAt: Date;
+  updatedBy: string;
+  metadata: Record<string, unknown>;
+}
+
+/**
+ * Cabinet instance
+ */
+export interface CabinetInstance {
+  instanceId: string;
+  templateId: string;
+  template: CabinetTemplate;
+  tagName: string;
+  description: string;
+  location: string;
+  area: string;
+  position: { x: number; y: number };
+  rotation: number;
+  status: CabinetStatus;
+  properties: {
+    ipRating?: string;
+    material?: string;
+    voltage?: number;
+    busbarRating?: number;
+    coolingType?: string;
+    [key: string]: unknown;
+  };
+  signals: SignalPoint[];
+  deviceIds: string[];
+  connectionIds: string[];
+  createdAt: Date;
+  createdBy: string;
+  updatedAt: Date;
+  updatedBy: string;
+  metadata: Record<string, unknown>;
+}
+
+/**
+ * Cabinet color mapping
+ */
+export const CABINET_CATEGORY_COLORS: Record<CabinetCategory, string> = {
+  [CabinetCategory.ELECTRICAL_PANEL]: '#795548',
+  [CabinetCategory.MCC_SECTION]: '#ff9800',
+  [CabinetCategory.CONTROL_CABINET]: '#2196f3',
+  [CabinetCategory.JUNCTION_BOX]: '#607d8b',
+  [CabinetCategory.INSTRUMENT_CABINET]: '#9c27b0',
+  [CabinetCategory.OUTDOOR_ENCLOSURE]: '#4caf50',
+  [CabinetCategory.PLC_RACK]: '#00bcd4',
+  [CabinetCategory.IO_CABINET]: '#3f51b5',
+  [CabinetCategory.MARSHALLING_CABINET]: '#e91e63',
+};
+
+/**
+ * Get cabinet category label
+ */
+export function getCabinetCategoryLabel(category: CabinetCategory): string {
+  const labels: Record<CabinetCategory, string> = {
+    [CabinetCategory.ELECTRICAL_PANEL]: 'Electrical Panel',
+    [CabinetCategory.MCC_SECTION]: 'MCC Section',
+    [CabinetCategory.CONTROL_CABINET]: 'Control Cabinet',
+    [CabinetCategory.JUNCTION_BOX]: 'Junction Box',
+    [CabinetCategory.INSTRUMENT_CABINET]: 'Instrument Cabinet',
+    [CabinetCategory.OUTDOOR_ENCLOSURE]: 'Outdoor Enclosure',
+    [CabinetCategory.PLC_RACK]: 'PLC Rack',
+    [CabinetCategory.IO_CABINET]: 'I/O Cabinet',
+    [CabinetCategory.MARSHALLING_CABINET]: 'Marshalling Cabinet',
+  };
+  return labels[category] || category;
 }

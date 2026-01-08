@@ -9,7 +9,6 @@ import {
   CabinetStatus,
   SignalPoint,
   SignalType,
-  SignalDirection,
   SIGNAL_DIRECTION_MAP,
 } from '../types';
 import { SignalFactory } from './SignalFactory';
@@ -231,7 +230,7 @@ const CABINET_DEFINITIONS: Record<string, CabinetDefinition> = {
       { nameSuffix: 'DOOR_OPEN', description: 'Door Open Status', type: SignalType.DI },
       { nameSuffix: 'PWR_OK', description: 'Power OK', type: SignalType.DI },
     ],
-    maxDevices: 0, // Marshalling cabinets typically don't have devices, just terminals
+    maxDevices: 0,
   },
 };
 
@@ -252,43 +251,6 @@ export class CabinetFactory {
    */
   static getTemplateInfo(templateType: string): CabinetDefinition | null {
     return CABINET_DEFINITIONS[templateType] || null;
-  }
-
-  /**
-   * Create a cabinet template from a predefined type
-   */
-  static createTemplate(templateType: string, createdBy: string): CabinetTemplate {
-    const def = CABINET_DEFINITIONS[templateType];
-    
-    if (!def) {
-      throw new Error(`Unknown cabinet template: ${templateType}. Available: ${Object.keys(CABINET_DEFINITIONS).join(', ')}`);
-    }
-
-    const templateId = uuidv4();
-    const now = new Date();
-
-    return {
-      id: templateId,
-      name: def.name,
-      category: def.category,
-      description: def.description,
-      icon: def.icon,
-      color: def.color,
-      width: def.width,
-      height: def.height,
-      depth: def.depth,
-      defaultProperties: { ...def.defaultProperties },
-      defaultSignals: def.defaultSignals.map(s => ({ ...s })),
-      maxDevices: def.maxDevices,
-      createdAt: now,
-      createdBy,
-      updatedAt: now,
-      updatedBy: createdBy,
-      metadata: {
-        templateType,
-        source: 'predefined',
-      },
-    };
   }
 
   /**
@@ -314,10 +276,10 @@ export class CabinetFactory {
     const templateId = uuidv4();
     const now = new Date();
 
-    // Create cabinet's own signals
+    // Create cabinet's own signals using SignalFactory
     const signals: SignalPoint[] = def.defaultSignals.map(signalDef => {
       return SignalFactory.createSignal({
-        tagName: `${tagName}_${signalDef.nameSuffix}`,
+        tagName: `${tagName.toUpperCase()}_${signalDef.nameSuffix}`,
         description: signalDef.description,
         type: signalDef.type,
         direction: SIGNAL_DIRECTION_MAP[signalDef.type],
@@ -375,51 +337,6 @@ export class CabinetFactory {
   }
 
   /**
-   * Clone a cabinet instance
-   */
-  static cloneInstance(
-    instance: CabinetInstance,
-    newTagName: string,
-    newPosition: { x: number; y: number },
-    createdBy: string
-  ): CabinetInstance {
-    const newInstanceId = uuidv4();
-    const now = new Date();
-
-    // Clone signals with new IDs and tag names
-    const clonedSignals: SignalPoint[] = instance.signals.map(signal => ({
-      ...signal,
-      id: uuidv4(),
-      tagName: signal.tagName.replace(instance.tagName, newTagName.toUpperCase()),
-      isConnected: false,
-      connectedToSignalId: undefined,
-      connectedToDeviceId: undefined,
-      createdAt: now,
-      createdBy,
-      updatedAt: now,
-      updatedBy: createdBy,
-    }));
-
-    return {
-      ...instance,
-      instanceId: newInstanceId,
-      tagName: newTagName.toUpperCase(),
-      position: newPosition,
-      signals: clonedSignals,
-      deviceIds: [], // Cloned cabinet starts empty
-      connectionIds: [],
-      createdAt: now,
-      createdBy,
-      updatedAt: now,
-      updatedBy: createdBy,
-      metadata: {
-        ...instance.metadata,
-        clonedFrom: instance.instanceId,
-      },
-    };
-  }
-
-  /**
    * Add a device ID to a cabinet
    */
   static addDevice(cabinet: CabinetInstance, deviceId: string, updatedBy: string): CabinetInstance {
@@ -428,7 +345,7 @@ export class CabinetFactory {
     }
 
     if (cabinet.deviceIds.includes(deviceId)) {
-      return cabinet; // Already added
+      return cabinet;
     }
 
     return {
@@ -445,7 +362,7 @@ export class CabinetFactory {
   static removeDevice(cabinet: CabinetInstance, deviceId: string, updatedBy: string): CabinetInstance {
     return {
       ...cabinet,
-      deviceIds: cabinet.deviceIds.filter(id => id !== deviceId),
+      deviceIds: cabinet.deviceIds.filter((id: string) => id !== deviceId),
       updatedAt: new Date(),
       updatedBy,
     };
