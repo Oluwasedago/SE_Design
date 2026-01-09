@@ -194,4 +194,7 @@ Safety signals need:
 | 1.2.0 | TBD | ISA 5.1, IEC 61850 |
 | 2.0.0 | TBD | Full standards suite |
 
-// TODO: Optimization - Decicde on the naming of the software, check "thoughts.md".
+# 🗺️ INDUSTRIAL SIGNAL PLATFORM - RANDOM THOUGHTS
+// TODO: Optimization - Decicde on the naming of the software
+
+- [ Software Name: Signal Engineering]
