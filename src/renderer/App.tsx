@@ -9,6 +9,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
+
+import { ProjectProvider } from './stores/ProjectContext';
+import { UIProvider } from './stores/UIContext';
+import { Workspace } from './components/Workspace';
 // Services
 import { userService } from '../core/services/UserService';
 import { auditService } from '../core/services/AuditService';
@@ -575,7 +579,8 @@ const App: React.FC = () => {
   // ===== STATE =====
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [project, setProject] = useState<Project | null>(null);
-  
+  const [useNewWorkspace, setUseNewWorkspace] = useState(false);
+
   // Cabinets and Devices
   const [cabinets, setCabinets] = useState<CabinetInstance[]>([]);
   const [devices, setDevices] = useState<DeviceInstance[]>([]);
@@ -1094,6 +1099,7 @@ const App: React.FC = () => {
   }, [project, connections, showNotification]);
 
   // ===== RENDER LOGIN IF NOT AUTHENTICATED =====
+// ===== RENDER LOGIN IF NOT AUTHENTICATED =====
   if (!currentUser) {
     return <LoginScreen onLogin={setCurrentUser} />;
   }
@@ -1153,6 +1159,18 @@ const App: React.FC = () => {
             }}
           >
             {connectionMode ? '⚡ Exit Connect Mode' : '🔗 Connect Mode'}
+          </button>
+        </div>
+        <div style={styles.toolbarGroup}>
+          <button
+            onClick={() => setUseNewWorkspace(true)}
+            style={{
+              ...styles.button,
+              backgroundColor: '#8b5cf6',
+              color: 'white',
+            }}
+          >
+            🖥️ IDE Workspace
           </button>
         </div>
         {connectionMode && (

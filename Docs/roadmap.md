@@ -195,6 +195,44 @@ Safety signals need:
 | 2.0.0 | TBD | Full standards suite |
 
 # 🗺️ INDUSTRIAL SIGNAL PLATFORM - RANDOM THOUGHTS
+// TODO: Structure - Project structure on web app first befpre moving to desktop app
 // TODO: Optimization - Decicde on the naming of the software
+// TODO: Main Core - Generic Panels creation
 
 - [ Software Name: Signal Engineering]
+- [Where do I see the IDE toggle button?]
+
+
+
+
+####################################
+I'm continuing work on Industrial Signal Platform.
+
+## Quick Context
+- Desktop signal engineering software (React + TypeScript + Vite)
+- Currently: UI complete, needs Electron + SQLite integration
+- App.tsx is 1909 lines - do not replace entirely
+- All code typechecks, 110+ tests passing
+
+## What's Working
+- Login/auth with RBAC
+- Classic tabbed interface
+- New IDE Workspace (toggle button in toolbar)
+- Device/cabinet CRUD
+- Signal connections
+
+## Today's Task
+[Describe specific task]
+
+## Files I'll Share
+[List relevant files for the task]
+
+## Constraints
+- No GitHub access - paste code directly
+- Verify types before coding (check src/core/types/index.ts)
+- All IDs via uuidv4()
+- OUTPUT→INPUT connection polarity
+
+For detailed file structure and type definitions, see Docs/AIContinue.md in my project.
+
+####################################

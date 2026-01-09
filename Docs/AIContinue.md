@@ -17,18 +17,18 @@
 [Paste the specific 10-20 lines of the current function/bug here]
 
 ################################# INFORMATION ######################################
-I am resuming work on an Industrial Signal Platform. Please rely entirely on the project summary below for the business rules and data structures. The last session completed:
+I am resuming work on my Industrial Signal Platform. Please rely entirely on the project summary below for the business rules and data structures. The last session completed:
 - ConnectionCanvas with React Flow
 - Full Workspace layout (IDE-style interface)
 - State management (ProjectContext, UIContext)
 - Mock data with 8 device templates
 
 All code typechecks successfully. The new Workspace component exists but is NOT YET integrated into the existing App.tsx (which has 1889 lines of legacy code).
+When you give codes to implement, always include the files, folder and lines if not all code replacement.
 
 NEXT TASK: [Choose one]
 A) Integrate Workspace into App.tsx with a view switcher
-B) Replace main.tsx to use new Workspace directly
-C) Begin Electron + SQLite integration
+B) Begin Electron + SQLite integration
 
 Please confirm which option before proceeding. Do not assume or replace App.tsx without confirmation.
 
@@ -36,10 +36,10 @@ Please confirm which option before proceeding. Do not assume or replace App.tsx 
 PROJECT HANDOVER: Industrial Signal Platform
 🎯 STATUS
 Field	Details
-Goal	Desktop-native, local-first signal engineering software (Engineering Base/EPLAN/TIA Portal style). For Signal List documentation only—NOT device configuration.
+Goal	Desktop-native, local-first signal engineering software (Engineering Base/EPLAN/TIA Portal style). For Signal List documentation only.
 Finished	Core engine, type system, all UI components (SignalListTable, DeviceLibrary, ConnectionCanvas, Workspace), state management (ProjectContext, UIContext), mock data
 Last Action	Completed full Workspace layout with IDE-style interface, resizable panels, toolbar, tabs, project tree, properties panel, and status bar
-BLOCKER/NEXT	Integrate new Workspace component into existing App.tsx OR implement route switching between legacy view and new Workspace view
+BLOCKER/NEXT	Integrate new Workspace component into existing App.tsx OR Begin Electron + SQLite integration
 🏗️ STACK & CONSTRAINTS
 Item	Details
 Tech	React 18, TypeScript 5, Vite, Vitest, React Flow 11.11.4
@@ -195,19 +195,13 @@ export interface SignalListTableProps {
 ⚠️ GOTCHAS & LESSONS LEARNED
 1. React Flow ConnectionMode
 typescript
-// ❌ WRONG - causes type error
-connectionMode="loose"
-
-// ❌ WRONG - ConnectionMode import doesn't work properly
 connectionMode={ConnectionMode.Loose}
 
 // ✅ CORRECT - just remove the prop entirely
 // (delete the line, default behavior is fine)
+
 2. SignalListTable requires signals prop
 typescript
-// ❌ WRONG
-<SignalListTable />
-
 // ✅ CORRECT
 <SignalListTable 
   signals={allSignals}
@@ -260,8 +254,6 @@ const [currentUser, setCurrentUser] = useState<User | null>(null);
 const [project, setProject] = useState<Project | null>(null);
 // ... many more useState hooks
 🎯 IMMEDIATE NEXT TASKS (Priority Order)
-Option A: Add View Switcher to App.tsx
-Add a toggle to switch between legacy view and new Workspace view:
 
 typescript
 // Add to App.tsx state
@@ -282,23 +274,8 @@ const [useNewWorkspace, setUseNewWorkspace] = useState(false);
 ) : (
   // ... existing legacy JSX
 )}
-Option B: Replace main.tsx entry point
-typescript
-// src/main.tsx - switch to new Workspace
-import { ProjectProvider } from './renderer/stores/ProjectContext';
-import { UIProvider } from './renderer/stores/UIContext';
-import { Workspace } from './renderer/components/Workspace';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ProjectProvider>
-      <UIProvider>
-        <Workspace />
-      </UIProvider>
-    </ProjectProvider>
-  </React.StrictMode>
-);
-Option C: Proceed to Electron Integration
+Option B: Proceed to Electron Integration
 Skip UI integration, proceed to:
 
 Install Electron dependencies
@@ -335,6 +312,7 @@ text
 ✅ npm run typecheck — PASSING (0 errors)
 ✅ npm test — 110+ tests passing
 ✅ ConnectionValidator.test.ts — 21 tests passing
+
 🔮 FUTURE ROADMAP
 Phase 2: Desktop Integration
  Electron shell setup

@@ -8,8 +8,13 @@ function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
-function walk(dir, cb, ignore = new Set(['node_modules', '.git', 'dist'])) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
+function walk(dir, cb, ignore = new Set(['node_modules', '.git', 'dist', '.vscode'])) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch (err) {
+    return; // skip unreadable dirs
+  }
   for (const e of entries) {
     if (ignore.has(e.name)) continue;
     const full = path.join(dir, e.name);
@@ -104,6 +109,11 @@ function generateKanban() {
   }
 
   if (newCards.length === 0) {
+    // if kanban file missing, write default board so users get the file even with no matches
+    if (!fs.existsSync(KANBAN_PATH)) {
+      saveKanban(board);
+      console.log('Created', KANBAN_PATH);
+    }
     console.log('No new TODO/FIXME items found.');
     return;
   }
