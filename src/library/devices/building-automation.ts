@@ -1,0 +1,1 @@
+export const OIL_GAS_TEMPLATES = [];

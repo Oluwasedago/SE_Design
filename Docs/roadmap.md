@@ -198,6 +198,8 @@ Safety signals need:
 // TODO: Structure - Project structure on web app first befpre moving to desktop app
 // TODO: Optimization - Decicde on the naming of the software
 // TODO: Main Core - Generic Panels creation
+// TODO: Start drafting installation system requirements
+// TODO: Calculate size of the whole code
 
 - [ Software Name: Signal Engineering]
 - [Where do I see the IDE toggle button?]
