@@ -1,269 +1,258 @@
-# 🏭 Industrial Signal Platform
+README.md
+markdown
+<div align="center">
 
-Production-grade signal list engineering software for industrial automation systems.
+# 🏭 Industrial Signal Platform (ISP)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)
-![React](https://img.shields.io/badge/React-18.2-61dafb.svg)
-![React Flow](https://img.shields.io/badge/React_Flow-11.11.4-ff0072.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-7.3-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-##🎯 Overview
-The Industrial Signal Platform is a comprehensive tool for designing, validating, and managing signal lists in industrial control systems. It supports PLCs, IEDs, RTUs, SCADA systems, and more.
+**A desktop-native, local-first engineering environment for industrial signal management**
 
-Target Users: Control system engineers, instrumentation engineers, and system integrators working with industrial automation projects.
+[Features](#-features) •
+[Quick Start](#-quick-start) •
+[Documentation](#-documentation) •
+[Device Library](#-device-library) •
+[Contributing](#-contributing)
 
-Comparable Products: Engineering Base, EPLAN Electric P8, Siemens TIA Portal, Aveva Instrumentation
+</div>
 
-Target Industries:
+---
 
-Power transmission, generation, distribution & auxiliaries
-Manufacturing & discrete automation
-Water & wastewater
-Oil & gas
-Substations & protection systems
-Renewables (wind, solar, BESS)
-Industrial power distribution
-Building automation
-Chemicals & Pharmaceuticals
-Food & beverage
-✨ Features
-Core Engine (Complete ✅)
-✅ Connection Validator — Enforces OUTPUT→INPUT polarity rules with 21 test cases
-✅ Signal Factory — Creates properly configured signals for 46 signal types
-✅ UDT Factory — User-Defined Type templates for industrial equipment
-✅ Cabinet Factory — Panel and cabinet creation with layout management
-✅ User Service — Role-based access control (Admin, Engineer, Reviewer, Viewer)
-✅ Audit Service — Immutable audit trail with 26 action types
-✅ Comparison Service — Import/merge with intelligent diff and change tracking
-Type System (Complete ✅)
-✅ 46 Signal Types — DI, DO, AI, AO, RTD, TC, HART, PROFINET, IEC 61850, and more
-✅ 10 Signal Categories — Discrete I/O, Analog I/O, Ethernet, Fieldbus, Safety, etc.
-✅ 18 Device Categories — PLC, IED, RTU, DCS, HMI, VFD, Motor, Valve, etc.
-✅ 5 Wire Types — Hardwired, Fieldbus, Ethernet, Serial, Fiber
-Device Library (In Progress 🔨)
-✅ Power Systems — 18 templates (generators, transformers, circuit breakers, switchgear)
-✅ Substations & Protection — Relays, IEDs, RTUs
-✅ Manufacturing PLCs — PLCs, I/O modules, safety controllers
-✅ Manufacturing Drives — 7 templates (VFDs, servos, soft starters, motors, starters)
-🔲 Process Instrumentation — Transmitters, analyzers, control valves, flowmeters
-🔲 Process Control — DCS controllers, batch systems
-🔲 Oil & Gas — Wellhead, separators, compressors, pipelines
-🔲 Building Automation — HVAC, BMS, lighting, access control
-Protocol Library (Planned 🔲)
-🔲 Fieldbus Protocols — Modbus RTU/TCP, HART, Foundation Fieldbus, PROFIBUS DP/PA
-🔲 Industrial Ethernet — PROFINET, EtherNet/IP, EtherCAT, Modbus TCP, POWERLINK
-🔲 Power System Protocols — IEC 61850, IEC 60870-5-101/104, DNP3, IEEE C37.118
-Cable Library (Planned 🔲)
-🔲 Power Cables — LV/MV/HV power cables with ampacity tables
-🔲 Control Cables — Control, instrumentation, thermocouple cables
-🔲 Communication Cables — Ethernet, fieldbus, serial cables
-🔲 Fiber Optic Cables — Single-mode, multi-mode, armored
-UI Components (Complete ✅)
-✅ Login Screen — Role-based authentication with demo credentials
-✅ Signal List Table — Sortable, filterable data grid with column configuration
-✅ Device Library — Draggable device templates organized by category
-✅ Connection Canvas — React Flow-based visual wiring diagrams
-✅ Project Explorer — Tree view of devices, signals, and connections
-✅ Properties Panel — Context-aware property editor
-✅ Workspace Layout — Professional IDE-style interface with resizable panels
-State Management (Complete ✅)
-✅ Project Context — Centralized project state with undo/redo support
-✅ UI Context — Panel visibility, selection, zoom, and theme management
-✅ Mock Data — Demo project with realistic industrial devices
-🚀 Quick Start
-Prerequisites
-Node.js v22.14.0 LTS or higher
-Git
-VS Code (recommended)
-Installation
-bash
+## 📋 Overview
+
+The **Industrial Signal Platform (ISP)** is a comprehensive engineering software designed to achieve the functional density and reliability of industry leaders such as:
+
+- **AUCOTEC Engineering Base**
+- **EPLAN Electric P8**
+- **Siemens TIA Portal**
+
+### Core Philosophy
+
+|
+ Principle 
+|
+ Description 
+|
+|
+-----------
+|
+-------------
+|
+|
+ 🏠 
+**
+Local-First
+**
+|
+ Resilience against network failure 
+|
+|
+ 🔒 
+**
+Type-Safe
+**
+|
+ Strict TypeScript enforcement for industrial data integrity 
+|
+|
+ 📊 
+**
+High-Density
+**
+|
+ Optimized for complex, data-heavy engineering workflows 
+|
+|
+ 🔌 
+**
+Signal-Centric
+**
+|
+ OUTPUT→INPUT polarity validation at the core 
+|
+
+---
+
+## ✨ Features
+
+### ✅ Currently Implemented
+
+- **🔐 Authentication & Authorization**
+  - Login/logout with RBAC
+  - 4 roles, 16 permissions
+  
+- **🖥️ User Interfaces**
+  - Classic tabbed interface (Hierarchy, Devices, Connections, Audit, Users)
+  - Modern IDE Workspace (toggle via purple button in toolbar)
+  
+- **📦 Device Management**
+  - Device/Cabinet creation from 111+ templates
+  - Signal connections with OUTPUT→INPUT validation
+  - Comprehensive audit trail logging
+  
+- **📚 Device Library** (111+ Templates)
+  - Power Systems (18 templates)
+  - Substations & Protection
+  - Manufacturing PLCs
+  - Manufacturing Drives (7 templates)
+  - Process Instrumentation (26 templates)
+  - Process Control (19 templates)
+  - Oil & Gas (25 templates)
+  - Building Automation (16 templates)
+
+- **🧪 Testing**
+  - 110+ passing tests
+
+### 🔜 Coming Soon
+
+- Electron desktop shell
+- SQLite persistence
+- File save/load (.isp files)
+- Import/Export (Excel, CSV)
+- Protocol Library
+- Cable Library
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** 22.14.0 LTS or higher
+- **npm** 10.x or higher
+
+### Installation
+
+```bash
 # Clone the repository
 git clone https://github.com/Oluwasedago/SE_Design.git
-cd industrial-signal-platform
+
+# Navigate to project directory
+cd SE_Design
 
 # Install dependencies
 npm install
 
 # Start development server
 npm run dev
-Available Commands
-bash
-npm run dev          # Start dev server (port 5173)
-npm run build        # Production build
-npm run test         # Run tests (110+ passing)
-npm run test:watch   # Watch mode
-npx tsc --noEmit     # Type check
-Demo Credentials
-Role	Username	Password
-Admin	admin	admin123
-Engineer	engineer	eng123
-Reviewer	reviewer	rev123
-Viewer	viewer	view123
+The application will be available at http://localhost:5173
+
+Available Scripts
+Command	Description
+npm run dev	Start development server (port 5173)
+npm run build	Create production build
+npm run test	Run test suite (110+ tests)
+npm run test:watch	Run tests in watch mode
+npx tsc --noEmit	Type check without emitting
 📁 Project Structure
 text
 industrial-signal-platform/
-├── Docs/
-│   ├── AIContinue.md              # AI handover document
-│   └── roadmap.md                 # Feature roadmap
-├── electron/                       # 🔲 Planned - Desktop shell
-├── src/
-│   ├── core/                       # Business logic (no React)
-│   │   ├── engine/
-│   │   │   ├── CabinetFactory.ts
-│   │   │   ├── ConnectionValidator.ts
-│   │   │   ├── SignalFactory.ts
-│   │   │   └── UDTFactory.ts
-│   │   ├── services/
-│   │   │   ├── AuditService.ts
-│   │   │   ├── ComparisonService.ts
-│   │   │   └── UserService.ts
-│   │   └── types/
-│   │       ├── index.ts
-│   │       ├── industrial-standards.ts
-│   │       └── signalCategories.ts
+│
+├── 📂 Docs/
+│   ├── AIContinue.md          # AI continuation guide
+│   └── roadmap.md             # Project roadmap
+│
+├── 📂 electron/               # Electron shell (planned)
+│
+├── 📂 src/
+│   ├── 📂 core/
+│   │   ├── 📂 __tests__/      # Unit tests
+│   │   ├── 📂 engine/         # Core business logic
+│   │   ├── 📂 services/       # Application services
+│   │   └── 📂 types/          # TypeScript types
 │   │
-│   ├── database/                   # 🔲 Planned - SQLite
-│   │   ├── entities/
-│   │   └── repositories/
+│   ├── 📂 database/           # SQLite persistence (planned)
 │   │
-│   ├── library/                    # Device/Protocol/Cable Libraries
-│   │   ├── devices/
-│   │   │   ├── index.ts
-│   │   │   ├── power-systems.ts          # ✅ 18 templates
-│   │   │   ├── substations-protection.ts
-│   │   │   ├── manufacturing-plc.ts
-│   │   │   ├── manufacturing-drives.ts   # ✅ 7 templates
-│   │   │   └── ...
-│   │   ├── protocols/              # 🔲 Planned
-│   │   └── cables/                 # 🔲 Planned
+│   ├── 📂 library/            # Device/Protocol/Cable libraries
+│   │   ├── 📂 devices/        # ✅ 8 files, 111+ templates
+│   │   ├── 📂 protocols/      # 🔜 Coming soon
+│   │   └── 📂 cables/         # 🔜 Coming soon
 │   │
-│   ├── renderer/                   # React UI layer
-│   │   ├── components/
-│   │   │   ├── ConnectionCanvas/
-│   │   │   ├── DeviceLibrary/
-│   │   │   ├── SignalListTable/
-│   │   │   └── Workspace/
-│   │   ├── stores/
-│   │   │   ├── ProjectContext.tsx
-│   │   │   └── UIContext.tsx
-│   │   └── App.tsx
+│   ├── 📂 renderer/
+│   │   ├── 📂 components/     # React components
+│   │   ├── 📂 hooks/          # Custom hooks
+│   │   ├── 📂 stores/         # State management
+│   │   └── App.tsx            # Main application
 │   │
-│   └── main.tsx
+│   └── main.tsx               # Entry point
+│
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
-🏗️ Architecture
-Component Hierarchy
-text
-App.tsx
-├── LoginScreen
-│
-├── [IDE Workspace View]
-│   └── <Workspace />
-│       ├── WorkspaceToolbar
-│       ├── WorkspaceTabs
-│       ├── WorkspaceSidebar
-│       │   ├── ProjectTree
-│       │   └── DeviceLibrary
-│       ├── Main Content Area
-│       │   ├── SignalListTable
-│       │   └── ConnectionCanvas
-│       ├── PropertiesPanel
-│       └── WorkspaceStatusBar
-│
-└── [Classic View]
-    ├── Header
-    ├── Toolbar
-    ├── Sidebar
-    ├── Tab Content
-    └── StatusBar
-Key Business Rules
-Connection Polarity: OUTPUT signals connect TO INPUT signals only
-Single Source: Each INPUT can have only ONE source
-Signal Types: 46 types grouped into 10 categories
-Audit Trail: All 26 action types logged immutably
-RBAC: 4 roles with 16 permissions
 📚 Device Library
-Power Systems (18 Templates)
-Category	Templates
-Generation	Synchronous Generator, Steam Turbine, Gas Turbine, Excitation System
-Transmission	HV Circuit Breaker, Disconnector, Earthing Switch, Power Transformer, CT, VT, Surge Arrester, Capacitor Bank, Reactor, Transmission Line
-Distribution	MV Switchgear, Distribution Transformer, LV Switchboard, LV Circuit Breaker
-Manufacturing Drives (7 Templates)
-Template	Description
-VFD	Variable Frequency Drive
-Servo Drive	High-precision servo system
-Soft Starter	Electronic soft starter
-AC Motor	Three-phase induction motor
-MCC Bucket	Motor Control Center bucket
-DOL Starter	Direct On Line starter
-Star-Delta Starter	Y-Δ reduced voltage starter
-Standards Compliance
-IEC 60034 — Rotating electrical machines
-IEC 61800 — Adjustable speed drives
-IEC 62271 — High-voltage switchgear
-IEC 60076 — Power transformers
-IEC 61869 — Instrument transformers
-IEEE C37 — Switchgear and protection
-IEEE C57 — Transformers
-ISA 5.1 — Instrumentation symbols and identification
-NEMA MG-1 — Motors and generators
+The ISP includes a comprehensive device template library covering multiple industries:
+
+Template Categories
+⚡ Power Systems (18 templates)
+🛡️ Substations & Protection
+�icing PLC & Drives
+🔬 Process Instrumentation (26 templates)
+🖥️ Process Control (19 templates)
+🛢️ Oil & Gas (25 templates)
+🏢 Building Automation (16 templates)
+Industry Standards Referenced
+Category	Standards
+Instrumentation	ISA 5.1, IEC 61508, IEC 61511, IEC 60534, IEC 61298
+Process Control	IEC 61131, ISA-88, ISA-95, IEC 62443, 21 CFR Part 11
+Oil & Gas	API (6A, 6D, 521, 610, 617, 618, 650, MPMS), ASME, NACE
+Building	ASHRAE 90.1, 62.1, 55, 135, BACnet, NFPA 72
+Power Systems	IEC 61850, IEEE C37, ANSI
+🔧 Configuration
+TypeScript Configuration
+The project uses strict TypeScript settings for maximum type safety:
+
+json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  }
+}
+Module System
+This project uses ES Modules ("type": "module" in package.json).
+
 🧪 Testing
+Run the test suite:
+
 bash
 # Run all tests
 npm run test
 
-# Watch mode
+# Run tests in watch mode
 npm run test:watch
 
-# Coverage report
+# Run tests with coverage
 npm run test:coverage
-Test Coverage: 110+ passing tests covering:
-
-Connection validation (21 test cases)
-Signal factory operations
-UDT template creation
-Cabinet management
-User authentication
-Audit trail logging
-🛣️ Roadmap
-Phase 1: Library Completion (Current)
- Complete device library (4 remaining files)
- Create protocol library (4 files)
- Create cable library (5 files)
-Phase 2: Demo Polish
- Wire up IDE Workspace handlers
- Add cable type selector
- Add protocol browser
- Improve visual feedback
-Phase 3: Persistence
- Electron shell setup
- SQLite integration
- File save/load (.isp format)
- Auto-save functionality
-Phase 4: Advanced Features
- UDT Template editor
- Import/Export (Excel, CSV)
- Multi-sheet support
- Reports generation
+📖 Documentation
+Document	Description
+AIContinue.md	AI continuation guide for development
+roadmap.md	Project roadmap and milestones
 🤝 Contributing
+We welcome contributions! Please follow these steps:
+
 Fork the repository
-Create a feature branch (git checkout -b feature/amazing-feature)
-Commit changes (git commit -m 'Add amazing feature')
-Push to branch (git push origin feature/amazing-feature)
+Create a feature branch (git checkout -b feature/AmazingFeature)
+Commit your changes (git commit -m 'Add some AmazingFeature')
+Push to the branch (git push origin feature/AmazingFeature)
 Open a Pull Request
 Code Style
-TypeScript strict mode enabled
-ESLint + Prettier for formatting
-All IDs via uuidv4()
-ISA 5.1 tag naming conventions
-Comprehensive JSDoc comments
+Use TypeScript strict mode
+Follow existing patterns in the codebase
+Include JSDoc comments for public APIs
+Write tests for new features
 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 🙏 Acknowledgments
-React Flow — Visual node-based editor
-Vite — Next-generation frontend tooling
-Vitest — Unit testing framework
-Built with ❤️ for industrial automation engineers
+Inspired by industry leaders: AUCOTEC, EPLAN, Siemens
+Built with React, TypeScript, and Vite
+Device templates follow ISA, IEC, API, and IEEE standards
+Built with ❤️ for Industrial Engineers
+
+⬆ Back to Top
