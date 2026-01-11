@@ -2,6 +2,16 @@
 // File: src/library/devices/substations-protection.ts (continued)
 // Continuing from IEEE_C37_2_DEVICE_NUMBERS
 // ═══════════════════════════════════════════════════════════════════════════════
+import {
+  BaseDeviceTemplate,
+  DeviceCategory,
+  StandardSignalDefinition,
+  DeviceAttribute
+} from './index';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SECTION 1: ENUMERATIONS
+// ─────────────────────────────────────────────────────────────────────────────
 
 export const IEEE_C37_2_DEVICE_NUMBERS = {
   // Commonly Used Protection Functions
@@ -2771,5 +2781,3 @@ export const SUBSTATIONS_PROTECTION_ENUMS = {
   IEC61850Edition,
   CommunicationProtocol,
 };
-
-export { IEEE_C37_2_DEVICE_NUMBERS };
