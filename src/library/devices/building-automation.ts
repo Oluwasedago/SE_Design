@@ -1869,7 +1869,7 @@ export const AHU_TEMPLATE: BaseDeviceTemplate = {
 /**
  * Rooftop Unit Template
  */
-export const RTU_TEMPLATE: BaseDeviceTemplate = {
+export const ROOFTOP_UNIT_TEMPLATE: BaseDeviceTemplate = {
   templateId: 'BAS-RTU-001',
   name: 'Rooftop Unit',
   category: DeviceCategory.ENCLOSURE,
@@ -2678,7 +2678,7 @@ export const ACCESS_CONTROL_TEMPLATE: BaseDeviceTemplate = {
 export const BUILDING_AUTOMATION_TEMPLATES: BaseDeviceTemplate[] = [
   // HVAC Equipment
   AHU_TEMPLATE,
-  RTU_TEMPLATE,
+  ROOFTOP_UNIT_TEMPLATE,
   VAV_TEMPLATE,
   FCU_TEMPLATE,
   
