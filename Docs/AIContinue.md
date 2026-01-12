@@ -1,37 +1,43 @@
-# AIContinue.md - Industrial Signal Platform Handover Document
-# Updated: 2025-01-12
-# Version: 2.2.0
+# Industrial Signal Platform - AI Continuation Guide
 
-═══════════════════════════════════════════════════════════════════════════════
-                    INDUSTRIAL SIGNAL PLATFORM (ISP)
-                         AI Continuation Guide
-═══════════════════════════════════════════════════════════════════════════════
+> **Last Updated:** 2025-01-13  
+> **Version:** 2.3.0  
+> **Status:** Active Development
+
+---
 
 ## 1. PROJECT OVERVIEW
 
 ### Project Vision
-The Industrial Signal Platform (ISP) is a desktop-native, local-first engineering 
-environment designed to achieve the functional density and reliability of industry 
-leaders such as Aucotec Engineering Base, EPLAN Electric P8, and Siemens TIA Portal.
+
+The Industrial Signal Platform (ISP) is a desktop-native, local-first engineering environment designed to achieve the functional density and reliability of industry leaders with user interfaces similar to:
+
+- **Aucotec Engineering Base**
+- **EPLAN Electric P8**
+- **Siemens TIA Portal**
 
 ### Core Philosophy
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  • Local-First     → Resilience against network failure                     │
-│  • Type-Safe       → Strict TypeScript enforcement for data integrity       │
-│  • High-Density    → Optimized for complex engineering workflows            │
-│  • Signal-Centric  → OUTPUT→INPUT polarity validation at the core           │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ • Local-First → Resilience against network failure │
+│ • Type-Safe → Strict TypeScript enforcement for data integrity │
+│ • High-Density → Optimized for complex engineering workflows │
+│ • Signal-Centric → OUTPUT→INPUT polarity validation at the core │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+text
 
 ### Repository
 https://github.com/Oluwasedago/SE_Design.git
+
+text
 
 ---
 
 ## 2. AI COLLABORATION SYSTEM
 
 ### Overview
-A bundle-based system for sharing full project code with AI assistants via web interfaces
-where direct file system access is not available.
+
+A bundle-based system for sharing full project code with AI assistants via web interfaces where direct file system access is not available.
 
 ### Folder Structure
 industrial-signal-platform/
@@ -51,18 +57,18 @@ industrial-signal-platform/
 text
 
 ### Bundle Categories & Sizes
-┌─────────────────┬─────────┬────────────┬─────────────────────────────────────┐
-│ Category        │ Files   │ Size       │ Contents                            │
-├─────────────────┼─────────┼────────────┼─────────────────────────────────────┤
-│ CORE            │ 12      │ 159.79 KB  │ Types, engine, services, tests      │
-│ LIBRARY         │ 10      │ 665.73 KB  │ Device templates (111+ templates)   │
-│ DOCS            │ 3       │ 44.83 KB   │ AIContinue.md, roadmap, README      │
-│ RENDERER        │ 29      │ 396.96 KB  │ React components, stores, hooks     │
-│ ROOT            │ 8       │ 1306.57 KB │ package.json, configs, workspace    │
-│ SRC_OTHER       │ 2       │ 0.26 KB    │ main.tsx, vite-env.d.ts             │
-└─────────────────┴─────────┴────────────┴─────────────────────────────────────┘
+
+| Category   | Files | Size       | Contents                          |
+|------------|-------|------------|-----------------------------------|
+| CORE       | 12    | 159.79 KB  | Types, engine, services, tests    |
+| LIBRARY    | 14    | ~800 KB    | Device + Protocol templates       |
+| DOCS       | 5     | ~60 KB     | AIContinue, roadmap, README, ADRs |
+| RENDERER   | 29    | 396.96 KB  | React components, stores, hooks   |
+| ROOT       | 8     | 1306.57 KB | package.json, configs, workspace  |
+| SRC_OTHER  | 2     | 0.26 KB    | main.tsx, vite-env.d.ts           |
 
 ### How to Regenerate Bundles
+
 When code changes, regenerate bundles before starting a new AI session:
 
 ```bash
@@ -78,7 +84,7 @@ AI Session Workflow
 Regenerate bundles if code has changed
 Start new chat with AI
 Share the handover document (this file) first
-Share bundles in priority order based on task:
+Share bundles in priority order based on task
 For Library Work (protocols, cables, devices):
 
 text
@@ -96,87 +102,71 @@ For Full Context:
 text
 Share PROJECT_BUNDLE.md (may need to split across messages)
 .gitignore Entry
-The bundles folder is gitignored (bundles are temporary, regenerate as needed):
-
 text
 # AI collaboration bundles (regenerate as needed)
 .ai/bundles/
 3. CURRENT STATUS SUMMARY
 ✅ COMPLETED FEATURES
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Core Application │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ✅ Login/logout with RBAC (4 roles, 16 permissions) │
-│ ✅ Classic tabbed interface (Hierarchy, Devices, Connections, Audit, Users)│
-│ ✅ New IDE Workspace (toggle via purple button in toolbar) │
-│ ✅ Device/Cabinet creation from templates │
-│ ✅ Signal connections with OUTPUT→INPUT validation │
-│ ✅ Audit trail logging │
-│ ✅ 110+ passing tests │
-│ ✅ AI collaboration bundle system │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Device Library (111+ Templates Total) │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ✅ index.ts - Master exports + interfaces + helpers │
-│ ✅ power-systems.ts - 18 templates (generators, transformers) │
-│ ✅ substations-protection.ts - Existing (relays, IEDs, RTUs) │
-│ ✅ manufacturing-plc.ts - Existing (PLCs, I/O, safety) │
-│ ✅ manufacturing-drives.ts - 7 templates (VFDs, motors, starters) │
-│ ✅ process-instrumentation.ts - 26 templates (PT, TT, FT, LT, valves) │
-│ ✅ process-control.ts - 19 templates (DCS, I/O, servers) │
-│ ✅ oil-gas.ts - 25 templates (wellhead, separators) │
-│ ✅ building-automation.ts - 16 templates (HVAC, BAS, lighting) │
-└─────────────────────────────────────────────────────────────────────────────┘
-
+Core Application
+Feature	Status
+Login/logout with RBAC (4 roles, 16 permissions)	✅ Complete
+Classic tabbed interface (Hierarchy, Devices, Connections, Audit, Users)	✅ Complete
+New IDE Workspace (toggle via purple button in toolbar)	✅ Complete
+Device/Cabinet creation from templates	✅ Complete
+Signal connections with OUTPUT→INPUT validation	✅ Complete
+Audit trail logging	✅ Complete
+110+ passing tests	✅ Complete
+AI collaboration bundle system	✅ Complete
+Device Library (111+ Templates)
+File	Status	Templates
+index.ts	✅	Master exports + interfaces + helpers
+power-systems.ts	✅	18 templates (generators, transformers)
+substations-protection.ts	✅	~9 templates (relays, IEDs, RTUs)
+manufacturing-plc.ts	✅	~15 templates (PLCs, I/O, safety)
+manufacturing-drives.ts	✅	7 templates (VFDs, motors, starters)
+process-instrumentation.ts	✅	26 templates (PT, TT, FT, LT, valves)
+process-control.ts	✅	19 templates (DCS, I/O, servers)
+oil-gas.ts	✅	25 templates (wellhead, separators)
+building-automation.ts	✅	16 templates (HVAC, BAS, lighting)
+Protocol Library (32 Protocols) ✨ NEW
+File	Status	Protocols
+index.ts	✅	Interfaces, enums, compatibility engine
+fieldbus-protocols.ts	✅	11 protocols (Modbus, HART, FF, PROFIBUS, etc.)
+industrial-ethernet.ts	✅	8 protocols (PROFINET, EtherNet/IP, EtherCAT, etc.)
+power-system-protocols.ts	✅	10 protocols (IEC 61850, DNP3, IEC 60870, etc.)
+Architecture Decision Records
+ADR	Status	Topic
+ADR-001	✅	Protocol-Cable Compatibility System
+ADR-002	✅	Three-Tier Template System
 🔲 PENDING WORK
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Infrastructure │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 🔲 Electron shell (folder exists, empty) │
-│ 🔲 SQLite persistence (folder exists, empty) │
-│ 🔲 File save/load (.isp files) │
-│ 🔲 Import/Export (Excel, CSV) │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Application Features │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 🔲 Generic Panels creation (cannot add in current UI) │
-│ 🔲 Generic Devices creation (cannot add in current UI) │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Library Files - NEXT PRIORITY │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 🔲 Protocol Library (src/library/protocols/) - 4 files │
-│ ├── index.ts │
-│ ├── fieldbus-protocols.ts (Modbus, HART, FF, PROFIBUS) │
-│ ├── industrial-ethernet.ts (PROFINET, EtherNet/IP, EtherCAT) │
-│ └── power-system-protocols.ts (IEC 61850, DNP3, IEC 60870) │
-│ │
-│ 🔲 Cable Library (src/library/cables/) - 5 files │
-│ ├── index.ts │
-│ ├── power-cables.ts (LV/MV/HV, ampacities) │
-│ ├── control-cables.ts (Control, instrumentation, TC) │
-│ ├── communication-cables.ts (Ethernet, fieldbus, serial) │
-│ └── fiber-optic-cables.ts (SM, MM, armored) │
-└─────────────────────────────────────────────────────────────────────────────┘
-
+Infrastructure
+Item	Status
+Electron shell (folder exists, empty)	🔲 Pending
+SQLite persistence (folder exists, empty)	🔲 Pending
+File save/load (.isp files)	🔲 Pending
+Import/Export (Excel, CSV)	🔲 Pending
+Application Features
+Item	Status
+UI update for protocols/cables selection	🔲 Pending
+Generic Panels creation UI	🔲 Pending
+Generic Devices creation UI	🔲 Pending
+Library Files - NEXT PRIORITY
+Library	Files	Status
+Cable Library	5 files	🔲 Next Priority
+└── index.ts		🔲 Pending
+└── power-cables.ts	LV/MV/HV, ampacities	🔲 Pending
+└── control-cables.ts	Control, instrumentation, TC	🔲 Pending
+└── communication-cables.ts	Ethernet, fieldbus, serial	🔲 Pending
+└── fiber-optic-cables.ts	SM, MM, armored	🔲 Pending
 4. TECH STACK & COMMANDS
 Technology Versions
-┌──────────────┬─────────────┐
-│ Technology │ Version │
-├──────────────┼─────────────┤
-│ Node │ 22.14.0 LTS │
-│ TypeScript │ 5.3+ │
-│ React │ 18.2 │
-│ Vite │ 7.3 │
-│ React Flow │ 11.11.4 │
-│ Vitest │ 4.0 │
-└──────────────┴─────────────┘
-
+Technology	Version
+Node	22.14.0 LTS
+TypeScript	5.3+
+React	18.2
+Vite	7.3
+React Flow	11.11.4
+Vitest	4.0
 Module Type: "type": "module" in package.json
 
 CLI Commands
@@ -190,19 +180,23 @@ npx tsc --noEmit     # Type check only
 text
 industrial-signal-platform/
 │
-├── .ai/                            # AI collaboration system
-│   ├── bundles/                    # Generated code bundles (gitignored)
-│   └── scripts/                    # Bundle generation scripts
+├── .ai/                                # AI collaboration system
+│   ├── bundles/                        # Generated code bundles (gitignored)
+│   └── scripts/                        # Bundle generation scripts
 │
 ├── Docs/
-│   ├── AIContinue.md               # THIS FILE - Handover document
-│   └── roadmap.md                  # Project roadmap
+│   ├── decisions/                      # Architecture Decision Records
+│   │   ├── README.md                   # ADR index
+│   │   ├── ADR-001-protocol-cable-compatibility.md
+│   │   └── ADR-002-three-tier-template-system.md
+│   ├── AIContinue.md                   # THIS FILE - Handover document
+│   └── roadmap.md                      # Project roadmap
 │
-├── electron/                       # 🔲 Empty - Electron shell planned
+├── electron/                           # 🔲 Empty - Electron shell planned
 │
 ├── src/
 │   ├── core/
-│   │   ├── __tests__/              # Unit tests
+│   │   ├── __tests__/                  # Unit tests
 │   │   ├── engine/
 │   │   │   ├── CabinetFactory.ts
 │   │   │   ├── ConnectionValidator.ts
@@ -217,35 +211,31 @@ industrial-signal-platform/
 │   │       ├── industrial-standards.ts
 │   │       └── signalCategories.ts
 │   │
-│   ├── database/                   # 🔲 Empty - SQLite planned
+│   ├── database/                       # 🔲 Empty - SQLite planned
 │   │   ├── entities/
 │   │   └── repositories/
 │   │
-│   ├── library/                    # ⚡ DEVICE/PROTOCOL/CABLE LIBRARIES
+│   ├── library/                        # ⚡ DEVICE/PROTOCOL/CABLE LIBRARIES
 │   │   │
-│   │   ├── devices/                # ✅ COMPLETE (8 files, 111+ templates)
-│   │   │   ├── index.ts                    ✅ Updated with all exports
-│   │   │   ├── power-systems.ts            ✅ 18 templates
-│   │   │   ├── substations-protection.ts   ✅ Existing
-│   │   │   ├── manufacturing-plc.ts        ✅ Existing
-│   │   │   ├── manufacturing-drives.ts     ✅ 7 templates
-│   │   │   ├── process-instrumentation.ts  ✅ 26 templates
-│   │   │   ├── process-control.ts          ✅ 19 templates
-│   │   │   ├── oil-gas.ts                  ✅ 25 templates
-│   │   │   └── building-automation.ts      ✅ 16 templates
-│   │   │
-│   │   ├── protocols/              # 🔲 TODO - Next priority
+│   │   ├── devices/                    # ✅ COMPLETE (8 files, 111+ templates)
 │   │   │   ├── index.ts
-│   │   │   ├── fieldbus-protocols.ts
-│   │   │   ├── industrial-ethernet.ts
-│   │   │   └── power-system-protocols.ts
+│   │   │   ├── power-systems.ts
+│   │   │   ├── substations-protection.ts
+│   │   │   ├── manufacturing-plc.ts
+│   │   │   ├── manufacturing-drives.ts
+│   │   │   ├── process-instrumentation.ts
+│   │   │   ├── process-control.ts
+│   │   │   ├── oil-gas.ts
+│   │   │   └── building-automation.ts
 │   │   │
-│   │   └── cables/                 # 🔲 TODO - Next priority
-│   │       ├── index.ts
-│   │       ├── power-cables.ts
-│   │       ├── control-cables.ts
-│   │       ├── communication-cables.ts
-│   │       └── fiber-optic-cables.ts
+│   │   ├── protocols/                  # ✅ COMPLETE (4 files, 32 protocols)
+│   │   │   ├── index.ts                # Interfaces, enums, compatibility engine
+│   │   │   ├── fieldbus-protocols.ts   # Modbus, HART, FF, PROFIBUS, etc.
+│   │   │   ├── industrial-ethernet.ts  # PROFINET, EtherNet/IP, EtherCAT, etc.
+│   │   │   └── power-system-protocols.ts # IEC 61850, DNP3, IEC 60870, etc.
+│   │   │
+│   │   └── cables/                     # 🔲 TODO - Next priority
+│   │       └── index.ts                # Placeholder
 │   │
 │   ├── renderer/
 │   │   ├── components/
@@ -258,36 +248,47 @@ industrial-signal-platform/
 │   │   │   ├── mockData.ts
 │   │   │   ├── ProjectContext.tsx
 │   │   │   └── UIContext.tsx
-│   │   └── App.tsx                 # Main app (~1900 lines)
+│   │   └── App.tsx                     # Main app (~1900 lines)
 │   │
-│   └── main.tsx                    # Application entry point
+│   └── main.tsx                        # Application entry point
 │
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
 6. DEVICE LIBRARY DETAILS
 Template Count by File
-┌──────────────────────────────────┬──────────┬────────────────────────────────────┐
-│ File │ Templates│ Contents │
-├──────────────────────────────────┼──────────┼────────────────────────────────────┤
-│ power-systems.ts │ 18 │ GEN, TR, CB, DS, CT, VT, etc. │
-│ substations-protection.ts │ ~10 │ Relays, IEDs, RTUs │
-│ manufacturing-plc.ts │ ~15 │ PLCs, I/O modules, safety │
-│ manufacturing-drives.ts │ 7 │ VFD, servo, starters │
-│ process-instrumentation.ts │ 26 │ PT, TT, FT, LT, AT, valves │
-│ process-control.ts │ 19 │ DCS, I/O, workstations, servers │
-│ oil-gas.ts │ 25 │ Wellhead, separators, compressors │
-│ building-automation.ts │ 16 │ AHU, VAV, chiller, boiler, BAS │
-├──────────────────────────────────┼──────────┼────────────────────────────────────┤
-│ TOTAL │ 111+ │ │
-└──────────────────────────────────┴──────────┴────────────────────────────────────┘
+File	Templates	Contents
+power-systems.ts	18	GEN, TR, CB, DS, CT, VT, etc.
+substations-protection.ts	~9	Relays, IEDs, RTUs
+manufacturing-plc.ts	~15	PLCs, I/O modules, safety
+manufacturing-drives.ts	7	VFD, servo, starters
+process-instrumentation.ts	26	PT, TT, FT, LT, AT, valves
+process-control.ts	19	DCS, I/O, workstations, servers
+oil-gas.ts	25	Wellhead, separators, compressors
+building-automation.ts	16	AHU, VAV, chiller, boiler, BAS
+TOTAL	111+	
+7. PROTOCOL LIBRARY DETAILS ✨ NEW
+Protocol Count by File
+File	Protocols	Contents
+fieldbus-protocols.ts	11	Modbus RTU/ASCII, HART, WirelessHART, FF-H1, PROFIBUS DP/PA, DeviceNet, CANopen, AS-i, IO-Link
+industrial-ethernet.ts	8	PROFINET, EtherNet/IP, EtherCAT, Modbus TCP, POWERLINK, OPC UA, MQTT, CC-Link IE
+power-system-protocols.ts	10	IEC 61850, DNP3 Serial/TCP, IEC 60870-5-101/104, IEEE C37.118, IEC 62351, ICCP, SunSpec, IEEE 2030.5
+TOTAL	32	
+Compatibility System
+The protocol library includes a soft validation compatibility engine:
 
-New Files Created (Session 2025-01-11)
-process-instrumentation.ts (26 templates): Pressure, Temperature, Flow, Level, Analyzers, Valves
-process-control.ts (19 templates): Controllers, I/O Modules, Workstations, Servers, Cabinets
-oil-gas.ts (25 templates): Production, Separation, Compression, Pumping, Storage, Flare, Metering, Pipeline
-building-automation.ts (16 templates): HVAC, Central Plant, Controls, Sensors, Lighting, Metering, Integration
-7. KEY INTERFACES
+Level	Icon	Meaning
+VERIFIED	✅	Industry-standard combination
+COMPATIBLE	⚠️	Works with minor advisories
+UNVERIFIED	❓	User-defined, not in library
+UNLIKELY	⛔	Physical mismatch, needs confirmation
+PENDING	📋	Generic placeholder, needs specification
+Three-Tier Template System
+Tier	Description	Flags
+Library	Pre-defined, industry-standard	isUserDefined: false, isGeneric: false
+User-Defined	Custom, project-specific	isUserDefined: true, isGeneric: false
+Generic	Placeholder, pending specification	isUserDefined: false, isGeneric: true
+8. KEY INTERFACES
 BaseDeviceTemplate
 typescript
 export interface BaseDeviceTemplate {
@@ -306,38 +307,50 @@ export interface BaseDeviceTemplate {
   isUserDefined: boolean;       // false for library templates
   version: string;              // '1.0.0'
 }
-StandardSignalDefinition
+BaseProtocolDefinition
 typescript
-export interface StandardSignalDefinition {
-  nameTemplate: string;         // '{TAG}_PV' → 'PT-101_PV'
-  descriptionTemplate: string;  // '{DESC} Process Value'
-  signalType: string;           // 'AI', 'AO', 'DI', 'DO', 'HART'
-  direction: 'INPUT' | 'OUTPUT' | 'BIDIRECTIONAL';
-  engineeringUnit?: string;     // 'PSI', '°F', '%'
-  rangeMin?: number;
-  rangeMax?: number;
-  isMandatory: boolean;
-  category: string;             // 'MEASUREMENT', 'CONTROL', 'ALARM'
+export interface BaseProtocolDefinition {
+  protocolId: string;
+  name: string;
+  abbreviation: string;
+  category: ProtocolCategory;
+  version: string;
+  description: string;
+  physicalRequirements: PhysicalLayerRequirements;
+  topology: NetworkTopology[];
+  maxNodes: number | null;
+  addressingMode: AddressingMode;
+  dataRate: DataRateSpec;
+  cycleTime?: CycleTimeSpec;
+  safetyCertifiable: boolean;
+  safetyProtocol?: string;
+  redundancySupport: RedundancyType[];
+  diagnosticCapabilities: DiagnosticCapability[];
+  typicalApplications: string[];
+  industries: string[];
+  standards: string[];
+  governingBody?: string;
+  attributes: ProtocolAttribute[];
+  icon: string;
+  isUserDefined: boolean;
+  isGeneric: boolean;
+  isDeprecated: boolean;
 }
-DeviceAttribute
+PhysicalLayerRequirements
 typescript
-export interface DeviceAttribute {
-  name: string;                 // 'pressureType'
-  label: string;                // 'Pressure Type'
-  dataType: 'STRING' | 'NUMBER' | 'BOOLEAN' | 'ENUM' | 'DATE';
-  enumValues?: string[];        // ['GAUGE', 'ABSOLUTE', 'DIFFERENTIAL']
-  defaultValue?: string | number | boolean;
-  unit?: string;                // 'PSI'
-  isRequired: boolean;
-  validation?: {
-    min?: number;
-    max?: number;
-    pattern?: string;
-    message?: string;
-  };
-  category: string;             // 'SPECIFICATION', 'CALIBRATION'
+export interface PhysicalLayerRequirements {
+  supportedMedia: PhysicalMediaType[];
+  minDataRate?: number;
+  maxDistance?: Partial<Record<PhysicalMediaType, number>>;
+  connectorTypes?: ConnectorType[];
+  shieldingRequired?: boolean;
+  terminationRequired?: boolean;
+  terminationResistance?: number;
+  powerOverCable?: boolean;
+  characteristicImpedance?: number;
 }
-8. DeviceCategory ENUM
+9. KEY ENUMERATIONS
+DeviceCategory
 typescript
 export enum DeviceCategory {
   // Power Systems
@@ -367,83 +380,48 @@ export enum DeviceCategory {
   // Infrastructure
   POWER_SUPPLY, UPS, BATTERY_SYSTEM, ENCLOSURE,
 }
-9. NEXT PRIORITIES
-Priority 1: Protocol Library (4 files)
-Create src/library/protocols/ folder with:
-
+ProtocolCategory
 typescript
-// index.ts - Master exports
-export interface ProtocolDefinition {
-  protocolId: string;
-  name: string;
-  category: ProtocolCategory;
-  version: string;
-  description: string;
-  physicalLayer: PhysicalLayerSpec[];
-  dataRate: DataRateSpec;
-  maxNodes: number;
-  maxDistance: number;
-  cableRequirements: string[];
-  typicalApplications: string[];
-  standards: string[];
-  diagnostics: DiagnosticCapability[];
-}
-
 export enum ProtocolCategory {
-  FIELDBUS = 'FIELDBUS',
-  INDUSTRIAL_ETHERNET = 'INDUSTRIAL_ETHERNET',
+  FIELDBUS_SERIAL = 'FIELDBUS_SERIAL',
+  FIELDBUS_ETHERNET = 'FIELDBUS_ETHERNET',
   POWER_SYSTEM = 'POWER_SYSTEM',
   BUILDING_AUTOMATION = 'BUILDING_AUTOMATION',
   WIRELESS = 'WIRELESS',
+  LEGACY = 'LEGACY',
+  USER_DEFINED = 'USER_DEFINED',
+  GENERIC = 'GENERIC',
 }
-Files to create:
-
-fieldbus-protocols.ts: Modbus RTU/TCP, HART, FOUNDATION Fieldbus, PROFIBUS DP/PA, DeviceNet, CANopen
-industrial-ethernet.ts: PROFINET, EtherNet/IP, EtherCAT, Modbus TCP, POWERLINK
-power-system-protocols.ts: IEC 61850, IEC 60870-5-101/104, DNP3, IEEE C37.118
-Priority 2: Cable Library (5 files)
+CompatibilityLevel
+typescript
+export enum CompatibilityLevel {
+  VERIFIED = 'VERIFIED',
+  COMPATIBLE = 'COMPATIBLE',
+  UNVERIFIED = 'UNVERIFIED',
+  UNLIKELY = 'UNLIKELY',
+  PENDING = 'PENDING',
+}
+10. NEXT PRIORITIES
+Priority 1: Cable Library (5 files)
 Create src/library/cables/ folder with:
 
-typescript
-// index.ts - Master exports
-export interface CableDefinition {
-  cableId: string;
-  name: string;
-  category: CableCategory;
-  type: string;
-  conductorCount: number;
-  conductorSize: string;      // AWG or mm²
-  voltage: VoltageRating;
-  ampacity: AmpacitySpec;
-  impedance?: number;         // ohms (for comm cables)
-  shielding: ShieldingType;
-  jacket: JacketMaterial;
-  temperature: TemperatureRating;
-  applications: string[];
-  standards: string[];
-}
-
-export enum CableCategory {
-  POWER_LV, POWER_MV, POWER_HV,
-  CONTROL, INSTRUMENTATION, THERMOCOUPLE,
-  COMMUNICATION, FIBER_OPTIC,
-}
-Files to create:
-
-power-cables.ts: LV/MV/HV power cables with ampacity tables
-control-cables.ts: Control, instrumentation, thermocouple extension
-communication-cables.ts: Cat5e/6/6A, fieldbus, serial
-fiber-optic-cables.ts: Single-mode, multi-mode, armored
-Priority 3: Application Features
-🔲 Generic Panels creation UI
-🔲 Generic Devices creation UI
-Priority 4: Infrastructure
-🔲 Web app structure finalization
-🔲 Installation system requirements
-🔲 Code size calculation
-🔲 Electron shell implementation
-🔲 SQLite persistence layer
-10. SESSION START PROMPT
+File	Contents
+index.ts	Master exports, BaseCableDefinition interface, helpers
+power-cables.ts	LV/MV/HV power cables with ampacity tables
+control-cables.ts	Control, instrumentation, thermocouple extension
+communication-cables.ts	Cat5e/6/6A, fieldbus, serial
+fiber-optic-cables.ts	Single-mode, multi-mode, armored
+Priority 2: UI Updates
+Update UI to support protocol selection
+Update UI to support cable selection
+Generic Panels creation UI
+Generic Devices creation UI
+Priority 3: Infrastructure
+Electron shell implementation
+SQLite persistence layer
+File save/load (.isp files)
+Import/Export (Excel, CSV)
+11. SESSION START PROMPT
 Copy this to start a new session:
 
 text
@@ -452,7 +430,7 @@ I'm continuing work on Industrial Signal Platform.
 ## Quick Context
 - Desktop signal engineering software (React + TypeScript + Vite)
 - Building comprehensive device/protocol/cable library
-- Similar to EPLAN Electric P8, AUCOTEC Engineering Base
+- User interface similar to EPLAN Electric P8, AUCOTEC Engineering Base
 
 ## Repository
 https://github.com/Oluwasedago/SE_Design.git (public)
@@ -462,24 +440,30 @@ Project has bundle system in .ai/ folder. Regenerate before sharing:
   node .ai/scripts/bundle-split.cjs
 
 ## Current Session Goal
-[STATE YOUR GOAL HERE]
+[STATE YOUR GOAL HERE - e.g., "Cable Library implementation"]
+
+## Completed
+- ✅ Device Library (111+ templates across 8 files)
+- ✅ Protocol Library (32 protocols across 4 files)
+- ✅ Protocol-Cable compatibility engine
 
 ## Bundles to Share
 Based on task, share in order:
 - BUNDLE_CORE.md (159 KB) - Types & engine
-- BUNDLE_LIBRARY.md (665 KB) - Device templates
-- BUNDLE_DOCS.md (44 KB) - Documentation
+- BUNDLE_LIBRARY.md (~800 KB) - Device + Protocol templates
+- BUNDLE_DOCS.md (~60 KB) - Documentation
 
 ## Key Constraints
-- Follow existing patterns from device files
+- Follow existing patterns from device/protocol files
 - Include industry standards references
 - TypeScript strict mode compliance
 - NO ASSUMPTIONS - ask for clarification
-11. FILE REFERENCE GUIDE
+12. FILE REFERENCE GUIDE
 Need To...	File to Modify
 Add device template	src/library/devices/[category].ts
 Add DeviceCategory	src/library/devices/index.ts
 Add protocol definition	src/library/protocols/[type].ts
+Add ProtocolCategory	src/library/protocols/index.ts
 Add cable specification	src/library/cables/[type].ts
 Add UI state	src/renderer/App.tsx
 Add signal type	src/core/types/signalCategories.ts
@@ -487,49 +471,45 @@ Add entity type	src/core/types/index.ts
 Add validation rule	src/core/engine/ConnectionValidator.ts
 Modify IDE workspace	src/renderer/components/Workspace/*.tsx
 Regenerate AI bundles	node .ai/scripts/bundle-split.cjs
-12. STANDARDS REFERENCED
+Add architecture decision	Docs/decisions/ADR-XXX-*.md
+13. STANDARDS REFERENCED
 By Device File
-┌─────────────────────────────┬────────────────────────────────────────────────┐
-│ File │ Standards │
-├─────────────────────────────┼────────────────────────────────────────────────┤
-│ process-instrumentation.ts │ ISA 5.1, IEC 61508, IEC 61511, IEC 60534, │
-│ │ IEC 61298, IEC 60751, IEC 60584, API, ASTM │
-├─────────────────────────────┼────────────────────────────────────────────────┤
-│ process-control.ts │ IEC 61131, IEC 61512 (ISA-88), IEC 62443, │
-│ │ ISA 95, ISA 18.2, 21 CFR Part 11, GAMP 5 │
-├─────────────────────────────┼────────────────────────────────────────────────┤
-│ oil-gas.ts │ API (6A, 6D, 11P, 14C, 521, 610, 617, 618, │
-│ │ 650, MPMS), ASME, NACE MR0175, AGA, DOT 49CFR │
-├─────────────────────────────┼────────────────────────────────────────────────┤
-│ building-automation.ts │ ASHRAE 90.1, 62.1, 55, 135, BACnet, │
-│ │ NFPA 72, UL 864, UL 294 │
-└─────────────────────────────┴────────────────────────────────────────────────┘
-
-13. GLOBAL TODO LIST
+File	Standards
+process-instrumentation.ts	ISA 5.1, IEC 61508, IEC 61511, IEC 60534, IEC 61298, IEC 60751, IEC 60584, API, ASTM
+process-control.ts	IEC 61131, IEC 61512 (ISA-88), IEC 62443, ISA 95, ISA 18.2, 21 CFR Part 11, GAMP 5
+oil-gas.ts	API (6A, 6D, 11P, 14C, 521, 610, 617, 618, 650, MPMS), ASME, NACE MR0175, AGA, DOT 49CFR
+building-automation.ts	ASHRAE 90.1, 62.1, 55, 135, BACnet, NFPA 72, UL 864, UL 294
+By Protocol File
+File	Standards
+fieldbus-protocols.ts	IEC 61158, IEC 61784, Modbus Specification, HART Protocol, CiA 301/402
+industrial-ethernet.ts	IEC 61158, IEC 61784-2, IEEE 802.3, OPC UA Specification
+power-system-protocols.ts	IEC 61850, IEC 60870-5, IEEE 1815 (DNP3), IEEE C37.118, IEC 62351
+14. GLOBAL TODO LIST
 Completed ✅
  Create process-instrumentation.ts (26 templates)
  Create process-control.ts (19 templates)
  Create oil-gas.ts (25 templates)
  Create building-automation.ts (16 templates)
- Update index.ts with exports, interfaces, and helpers
+ Update devices/index.ts with exports, interfaces, and helpers
  Set up AI collaboration bundle system
+ Create protocols/index.ts with interfaces and compatibility engine
+ Create fieldbus-protocols.ts (11 protocols)
+ Create industrial-ethernet.ts (8 protocols)
+ Create power-system-protocols.ts (10 protocols)
+ Create Architecture Decision Records (ADR-001, ADR-002)
 Pending 🔲
- Create protocols folder and files (4 files)
  Create cables folder and files (5 files)
+ Update UI for protocol/cable selection
  Generic Panels creation UI
  Generic Devices creation UI
- Web app structure finalization
- Installation system requirements
- Code size calculation
  Electron shell implementation
  SQLite persistence layer
-14. VERSION HISTORY
+ File save/load (.isp files)
+ Import/Export (Excel, CSV)
+15. VERSION HISTORY
 Version	Date	Changes
 2.0.0	2025-01-11	Added 86 device templates across 4 new files
 2.1.0	2025-01-11	Updated index.ts, added helper functions
 2.2.0	2025-01-12	Added AI collaboration bundle system
-═══════════════════════════════════════════════════════════════════════════════
-END OF HANDOVER DOCUMENT
-Version 2.2.0
-Updated: 2025-01-12
-═══════════════════════════════════════════════════════════════════════════════
+2.3.0	2025-01-13	Added Protocol Library (32 protocols, 4 files), ADR system
+End of Document

@@ -1,4 +1,3 @@
-markdown
 <div align="center">
 
 # 🏭 Industrial Signal Platform (ISP)
@@ -13,7 +12,7 @@ markdown
 [Features](#-features) •
 [Quick Start](#-quick-start) •
 [Documentation](#-documentation) •
-[Device Library](#-device-library) •
+[Libraries](#-libraries) •
 [Contributing](#-contributing)
 
 </div>
@@ -124,7 +123,7 @@ Signal-Centric
 |
  Manufacturing PLCs 
 |
- Existing 
+ ~15 
 |
  PLCs, I/O modules, safety controllers 
 |
@@ -164,17 +163,58 @@ Signal-Centric
  HVAC, lighting, BAS 
 |
 
+#### Protocol Library (32 Protocols) ✨ NEW
+|
+ Category 
+|
+ Protocols 
+|
+ Description 
+|
+|
+----------
+|
+-----------
+|
+-------------
+|
+|
+ Serial Fieldbus 
+|
+ 12 
+|
+ Modbus RTU/ASCII, HART, FF-H1, PROFIBUS, DeviceNet, CANopen, AS-i, IO-Link 
+|
+|
+ Industrial Ethernet 
+|
+ 8 
+|
+ PROFINET, EtherNet/IP, EtherCAT, Modbus TCP, POWERLINK, OPC UA, MQTT, CC-Link IE 
+|
+|
+ Power Systems 
+|
+ 10 
+|
+ IEC 61850, DNP3, IEC 60870-5-101/104, IEEE C37.118, ICCP, SunSpec 
+|
+
+#### Protocol-Cable Compatibility System
+- **Soft validation** with 5 compatibility levels (Verified, Compatible, Unverified, Unlikely, Pending)
+- **Three-tier template system** (Library, User-Defined, Generic placeholders)
+- **Engineering flexibility** — system advises, engineer decides
+
 #### Testing
 - 110+ passing tests with Vitest
 
 ### 🔜 Coming Soon
 
+- [ ] Cable Library (5 files)
 - [ ] Electron desktop shell
 - [ ] SQLite persistence layer
 - [ ] File save/load (.isp files)
 - [ ] Import/Export (Excel, CSV)
-- [ ] Protocol Library (4 files)
-- [ ] Cable Library (5 files)
 
 ---
 
@@ -230,6 +270,10 @@ npx tsc --noEmit	Type check without emitting
 text
 SE_Design/
 ├── 📂 Docs/
+│   ├── 📂 decisions/              # Architecture Decision Records
+│   │   ├── README.md
+│   │   ├── ADR-001-protocol-cable-compatibility.md
+│   │   └── ADR-002-three-tier-template-system.md
 │   ├── AIContinue.md              # AI continuation guide
 │   └── roadmap.md                 # Project roadmap
 │
@@ -251,7 +295,7 @@ SE_Design/
 │   │
 │   ├── 📂 database/               # 🔜 SQLite persistence (planned)
 │   │
-│   ├── 📂 library/                # Device/Protocol/Cable libraries
+│   ├── 📂 library/
 │   │   ├── 📂 devices/            # ✅ 8 files, 111+ templates
 │   │   │   ├── index.ts
 │   │   │   ├── power-systems.ts
@@ -262,8 +306,15 @@ SE_Design/
 │   │   │   ├── process-control.ts
 │   │   │   ├── oil-gas.ts
 │   │   │   └── building-automation.ts
-│   │   ├── 📂 protocols/          # 🔜 Coming soon
+│   │   │
+│   │   ├── 📂 protocols/          # ✅ 4 files, 32 protocols
+│   │   │   ├── index.ts           # Interfaces, enums, compatibility engine
+│   │   │   ├── fieldbus-protocols.ts
+│   │   │   ├── industrial-ethernet.ts
+│   │   │   └── power-system-protocols.ts
+│   │   │
 │   │   └── 📂 cables/             # 🔜 Coming soon
+│   │       └── index.ts           # Placeholder
 │   │
 │   ├── 📂 renderer/
 │   │   ├── components/            # React components
@@ -276,7 +327,8 @@ SE_Design/
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
-📚 Device Library
+📚 Libraries
+Device Library (111+ Templates)
 The ISP includes a comprehensive device template library covering multiple industries.
 
 Template Categories
@@ -286,14 +338,30 @@ Template Categories
 🖥️ Process Control — 19 templates
 🛢️ Oil & Gas — 25 templates
 🏢 Building Automation — 16 templates
-Industry Standards Referenced
+Protocol Library (32 Protocols) ✨ NEW
+Industrial communication protocols with soft validation compatibility engine.
+
+Protocol Categories
+Category	Count	Protocols
+Serial Fieldbus	12	Modbus RTU, Modbus ASCII, HART, WirelessHART, FF-H1, PROFIBUS DP, PROFIBUS PA, DeviceNet, CANopen, AS-Interface, IO-Link
+Industrial Ethernet	8	PROFINET, EtherNet/IP, EtherCAT, Modbus TCP, POWERLINK, OPC UA, MQTT, CC-Link IE
+Power Systems	10	IEC 61850, DNP3 Serial, DNP3 TCP, IEC 60870-5-101, IEC 60870-5-104, IEEE C37.118, IEC 62351, ICCP/TASE.2, SunSpec Modbus, IEEE 2030.5
+Compatibility Levels
+Level	Icon	Meaning
+VERIFIED	✅	Industry-standard combination
+COMPATIBLE	⚠️	Works with minor advisories
+UNVERIFIED	❓	User-defined, not in library
+UNLIKELY	⛔	Physical mismatch, needs confirmation
+PENDING	📋	Generic placeholder, needs specification
+📖 Industry Standards Referenced
 Domain	Standards
 Instrumentation	ISA 5.1, IEC 61508, IEC 61511, IEC 60534
 Process Control	IEC 61131, ISA-88, ISA-95, IEC 62443
 Oil & Gas	API 6A/6D/521/610/617/650/MPMS, ASME, NACE
 Building	ASHRAE 90.1/62.1/55/135, BACnet, NFPA 72
-Power Systems	IEC 61850, IEEE C37, IEC 60255
-Compliance	21 CFR Part 11, GAMP 5
+Power Systems	IEC 61850, IEEE C37, IEC 60255, IEC 60870-5
+Industrial Networks	IEC 61158, IEC 61784, IEEE 802.3
+Compliance	21 CFR Part 11, GAMP 5, NERC CIP
 🔧 Configuration
 TypeScript Configuration
 The project enforces strict TypeScript settings:
@@ -330,6 +398,8 @@ Component and unit tests
 Document	Purpose
 AIContinue.md	AI continuation guide for development
 roadmap.md	Project roadmap and milestones
+ADR-001	Protocol-Cable Compatibility Architecture
+ADR-002	Three-Tier Template System
 🤝 Contributing
 We welcome contributions! Please follow these guidelines:
 
@@ -359,6 +429,15 @@ Follow the BaseDeviceTemplate interface
 Include relevant industry standards
 Add comprehensive signal definitions
 Include validation rules for attributes
+Protocol Template Guidelines
+When adding new protocol definitions:
+
+Place in appropriate file under src/library/protocols/
+Follow the BaseProtocolDefinition interface
+Define physicalRequirements for compatibility engine
+Include industry standards and governing body
+Set isUserDefined and isGeneric flags appropriately
+
 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
@@ -366,6 +445,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 Inspired by AUCOTEC Engineering Base, EPLAN Electric P8, and Siemens TIA Portal
 Built with React, TypeScript, Vite, and React Flow
 Device templates follow ISA, IEC, API, IEEE, and ASHRAE standards
+Protocol definitions follow IEC 61158, IEC 61784, IEEE, and ODVA specifications
+Made-Possible-by Anthropic's Claude Opus 4.5
 Built with ❤️ for Industrial Engineers
 
 ⬆ Back to Top
