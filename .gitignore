@@ -35,3 +35,6 @@ coverage/
 # Cache
 .cache/
 .eslintcache
+
+# AI collaboration bundles (regenerate as needed)
+.ai/bundles/
