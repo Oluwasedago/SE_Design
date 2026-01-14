@@ -9,6 +9,7 @@ A desktop-native, local-first engineering environment for industrial signal mana
 
 Features •
 Quick Start •
+Roadmap •
 Documentation •
 Libraries •
 Contributing
@@ -19,12 +20,14 @@ The Industrial Signal Platform (ISP) is a comprehensive engineering software des
 AUCOTEC Engineering Base
 EPLAN Electric P8
 Siemens TIA Portal
+CIMTool (for information modeling patterns)
 Core Philosophy
 Principle	Description
 🏠 Local-First	Resilience against network failure
 🔒 Type-Safe	Strict TypeScript enforcement for industrial data integrity
 📊 High-Density	Optimized for complex, data-heavy engineering workflows
 🔌 Signal-Centric	OUTPUT→INPUT polarity validation at the core
+🔄 Progressive	Evolve incrementally, don't break working features
 ✨ Features
 ✅ Currently Implemented
 Authentication & Authorization
@@ -52,7 +55,7 @@ Category	Protocols	Description
 Serial Fieldbus	11	Modbus RTU/ASCII, HART, FF-H1, PROFIBUS, DeviceNet, CANopen, AS-i, IO-Link
 Industrial Ethernet	8	PROFINET, EtherNet/IP, EtherCAT, Modbus TCP, POWERLINK, OPC UA, MQTT, CC-Link IE
 Power Systems	10	IEC 61850, DNP3, IEC 60870-5-101/104, IEEE C37.118, ICCP, SunSpec
-Cable Library (38 Cables) ✨ NEW
+Cable Library (38 Cables)
 Category	Cables	Description
 Power Cables	9	THHN, XHHW, MC, SOOW, VFD, MV-15kV, MV-35kV, TC Tray, PLTC
 Control & Instrumentation	9	Control PVC/Shielded/Flexible, Instrumentation TP/MP/Triad, TC Type K/J/T
@@ -69,13 +72,62 @@ Bundle system — Code sharing for AI-assisted development
 Architecture Decision Records — Documented technical decisions
 Testing
 110+ passing tests with Vitest
+🗺️ Development Roadmap
+Strategic Approach: Progressive Enhancement (ADR-003)
+The project follows a phased development approach that prioritizes shipping working features over architectural perfection. UI improvements are implemented using current data structures, with schema evolution planned for later phases.
+
+Target UI Layout
+text
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Menu: File | Edit | View | Project | Tools | Window | Help                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Toolbar: [New] [Open] [Save] | [Undo] [Redo] | [Validate] [Export] | [View]│
+├────────────┬─────────────────────────────────────────┬─────────────────────┤
+│            │                                         │                     │
+│  PROJECT   │           EDITOR AREA                   │    PROPERTIES      │
+│  NAVIGATOR │  ┌─────────────────────────────────┐   │                     │
+│            │  │ Tab: Connections                │   │  ┌───────────────┐ │
+│  ├─Project │  │ Tab: Signal-List                │   │  │ Selected:     │ │
+│  │ ├─Cab   │  │ Tab: Diagram                    │   │  │ PT-001        │ │
+│  │ │ ├─Dev │  ├─────────────────────────────────┤   │  │               │ │
+│  │ │ └─Dev │  │                                 │   │  │ Protocol:     │ │
+│  │ └─Cab   │  │    [Visual Canvas Area]         │   │  │ HART          │ │
+│  └─Cables  │  │                                 │   │  │ Cable:        │ │
+│            │  │    Device nodes connected       │   │  │ Inst-TP       │ │
+├────────────┤  │    by signal lines              │   │  │               │ │
+│  OUTLINE   │  │                                 │   │  │ Signals: 4    │ │
+│            │  │         ┌───┐    ┌───┐         │   │  └───────────────┘ │
+│  Signals:  │  │         │PT │────│DCS│         │   │                     │
+│  - AI_001  │  │         └───┘    └───┘         │   │  ┌───────────────┐ │
+│  - AO_001  │  │                                 │   │  │ VALIDATION    │ │
+│  - DI_001  │  └─────────────────────────────────┘   │  │ ✅ Compatible │ │
+├────────────┴─────────────────────────────────────────┴─────────────────────┤
+│ Status: Ready | Signals: 45 | Connections: 23 | Validation: ✅ Pass        │
+└─────────────────────────────────────────────────────────────────────────────┘
+Phase Overview
+Phase	Focus	Timeline	Status
+Phase 1	IDE Layout (5-panel interface)	1-2 weeks	🔄 In Progress
+Phase 2	Protocol & Cable Selection UI	1 week	🔲 Pending
+Phase 3	File Persistence (.isp files)	1 week	🔲 Pending
+Phase 4	Schema Evolution	As needed	🔲 Planned
+Phase 5	Advanced Features	As needed	🔲 Planned
+Phase 1: IDE Layout Components 🔄
+Component	Description	Status
+IDELayout	Main 5-panel layout container	🔲
+MenuBar	File, Edit, View, Project, Tools, Window, Help	🔲
+Toolbar	Icon action buttons	🔲
+ProjectNavigator	Tree view (cabinets → devices → signals)	🔲
+OutlinePanel	Context-sensitive entity outline	🔲
+EditorTabs	Multi-tab document container	🔲
+PropertiesPanel	Selected item properties	🔲
+ValidationPanel	Compatibility warnings display	🔲
+StatusBar	Bottom status information	🔲
 🔜 Coming Soon
- UI updates for protocol/cable selection
- Generic Panels/Devices/Cables creation UI
- Electron desktop shell
- SQLite persistence layer
- File save/load (.isp files)
- Import/Export (Excel, CSV)
+ Phase 1: 5-panel IDE layout with resizable panels
+ Phase 2: Protocol/cable selection dropdowns and compatibility badges
+ Phase 3: Save/load projects as .isp files
+ Phase 4: Schema evolution for advanced features
+ Phase 5: Electron shell, SQLite, Excel/CSV export
 🚀 Quick Start
 Prerequisites
 Requirement	Version
@@ -124,11 +176,14 @@ industrial-signal-platform/
 │   ├── 📂 decisions/                   # Architecture Decision Records
 │   │   ├── README.md
 │   │   ├── ADR-001-protocol-cable-compatibility.md
-│   │   └── ADR-002-three-tier-template-system.md
+│   │   ├── ADR-002-three-tier-template-system.md
+│   │   └── ADR-003-progressive-ui-enhancement.md  # ✨ NEW
+│   ├── 📂 specifications/              # ✨ NEW - Technical specifications
+│   │   └── isp-file-schema.md          # Target .isp file format
 │   ├── AIContinue.md                   # AI continuation guide
 │   └── roadmap.md                      # Project roadmap
 │
-├── CLAUDE.md                           # ✨ AI collaboration rules
+├── CLAUDE.md                           # AI collaboration rules
 │
 ├── 📂 electron/                        # 🔲 Electron shell (planned)
 │
@@ -143,6 +198,7 @@ industrial-signal-platform/
 │   │   ├── services/                   # Application services
 │   │   │   ├── AuditService.ts
 │   │   │   ├── ComparisonService.ts
+│   │   │   ├── FileService.ts          # 🔲 Phase 3
 │   │   │   └── UserService.ts
 │   │   └── types/                      # TypeScript definitions
 │   │       ├── index.ts
@@ -182,10 +238,22 @@ industrial-signal-platform/
 │   │
 │   ├── 📂 renderer/
 │   │   ├── components/                 # React components
-│   │   │   ├── ConnectionCanvas/
-│   │   │   ├── DeviceLibrary/
-│   │   │   ├── SignalListTable/
-│   │   │   └── Workspace/
+│   │   │   ├── ConnectionCanvas/       # Existing
+│   │   │   ├── DeviceLibrary/          # Existing
+│   │   │   ├── SignalListTable/        # Existing
+│   │   │   ├── Workspace/              # Existing
+│   │   │   │
+│   │   │   │   # ✨ Phase 1 Components (Planned)
+│   │   │   ├── IDELayout/              # 🔲 Main layout container
+│   │   │   ├── MenuBar/                # 🔲 Top menu bar
+│   │   │   ├── Toolbar/                # 🔲 Icon toolbar
+│   │   │   ├── ProjectNavigator/       # 🔲 Tree view panel
+│   │   │   ├── OutlinePanel/           # 🔲 Entity outline
+│   │   │   ├── EditorTabs/             # 🔲 Tab container
+│   │   │   ├── PropertiesPanel/        # 🔲 Properties editor
+│   │   │   ├── ValidationPanel/        # 🔲 Compatibility display
+│   │   │   └── StatusBar/              # 🔲 Status bar
+│   │   │
 │   │   ├── hooks/                      # Custom hooks
 │   │   ├── stores/                     # State management
 │   │   │   ├── mockData.ts
@@ -220,7 +288,7 @@ Category	Count	Protocols
 Serial Fieldbus	11	Modbus RTU, Modbus ASCII, HART, WirelessHART, FF-H1, PROFIBUS DP, PROFIBUS PA, DeviceNet, CANopen, AS-Interface, IO-Link
 Industrial Ethernet	8	PROFINET, EtherNet/IP, EtherCAT, Modbus TCP, POWERLINK, OPC UA, MQTT, CC-Link IE
 Power Systems	10	IEC 61850, DNP3 Serial, DNP3 TCP, IEC 60870-5-101, IEC 60870-5-104, IEEE C37.118, IEC 62351, ICCP/TASE.2, SunSpec Modbus, IEEE 2030.5
-Cable Library (38 Cables) ✨ NEW
+Cable Library (38 Cables)
 Comprehensive cable specifications with protocol-cable compatibility engine.
 
 Cable Categories
@@ -315,6 +383,8 @@ AIContinue.md	AI continuation guide for development
 roadmap.md	Project roadmap and milestones
 ADR-001	Protocol-Cable Compatibility Architecture (amended 2025-01-14)
 ADR-002	Three-Tier Template System
+ADR-003	Progressive UI Enhancement Strategy ✨ NEW
+isp-file-schema.md	Target .isp file format specification ✨ NEW
 🤝 Contributing
 We welcome contributions! Please follow these guidelines:
 
@@ -353,7 +423,7 @@ Follow the BaseProtocolDefinition interface
 Define physicalRequirements for compatibility engine
 Include industry standards and governing body
 Set isUserDefined and isGeneric flags appropriately
-Cable Template Guidelines ✨ NEW
+Cable Template Guidelines
 When adding new cable specifications:
 
 Place in appropriate file under src/library/cables/
@@ -366,7 +436,7 @@ Reference relevant standards (UL, NEC, IEC, TIA)
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 🙏 Acknowledgments
-Inspired by AUCOTEC Engineering Base, EPLAN Electric P8, and Siemens TIA Portal
+Inspired by AUCOTEC Engineering Base, EPLAN Electric P8, Siemens TIA Portal, and CIMTool
 Built with React, TypeScript, Vite, and React Flow
 Device templates follow ISA, IEC, API, IEEE, and ASHRAE standards
 Protocol definitions follow IEC 61158, IEC 61784, IEEE, and ODVA specifications
@@ -374,6 +444,6 @@ Cable specifications follow UL, NEC, TIA/EIA, and IEC standards
 Made possible by Anthropic's Claude
 Built with ❤️ for Industrial Engineers
 
-Version 2.4.0 • Last Updated: 2025-01-14
+Version 2.5.0 • Last Updated: 2025-01-15
 
 ⬆ Back to Top
