@@ -232,30 +232,7 @@ export interface CompatibilityAssessment {
   requiresConfirmation: boolean;
 }
 
-// SECTION 6: CABLE INTERFACE (Forward Declaration for Compatibility Engine)
-
-export interface PhysicalLayerCapabilities {
-  mediaType: PhysicalMediaType;
-  maxDataRate: number;
-  maxDistance: number;
-  connectorTypes: ConnectorType[];
-  shielding: ShieldingType;
-  characteristicImpedance?: number;
-  capacitance?: number;
-  supportsPoE?: boolean;
-  supportsPowerOverFieldbus?: boolean;
-}
-
-export interface BaseCableDefinition {
-  cableId: string;
-  name: string;
-  physicalCapabilities: PhysicalLayerCapabilities;
-  isUserDefined: boolean;
-  isGeneric: boolean;
-}
-
-// SECTION 7: GENERIC AND USER-DEFINED TEMPLATES
-
+// SECTION 6: GENERIC AND USER-DEFINED TEMPLATES
 export const GENERIC_PROTOCOL_TEMPLATE: BaseProtocolDefinition = {
   protocolId: 'PROTO-GENERIC-001',
   name: 'Generic Protocol (TBD)',
@@ -318,142 +295,8 @@ export const USER_DEFINED_PROTOCOL_TEMPLATE: BaseProtocolDefinition = {
   isDeprecated: false,
 };
 
-// SECTION 8: COMPATIBILITY ENGINE
 
-export function assessProtocolCableCompatibility(
-  protocol: BaseProtocolDefinition,
-  cable: BaseCableDefinition
-): CompatibilityAssessment {
-  if (protocol.isGeneric || cable.isGeneric) {
-    return {
-      level: CompatibilityLevel.PENDING,
-      message: 'Specification pending',
-      details: ['Protocol or cable type not yet defined', 'Item flagged for project review'],
-      requiresConfirmation: false,
-    };
-  }
-
-  if (protocol.isUserDefined || cable.isUserDefined) {
-    return {
-      level: CompatibilityLevel.UNVERIFIED,
-      message: 'User-defined combination',
-      details: ['Compatibility not verified by system library', 'Engineering judgment applied'],
-      requiresConfirmation: false,
-    };
-  }
-
-  const req = protocol.physicalRequirements;
-  const cap = cable.physicalCapabilities;
-
-  const mediaMatch = req.supportedMedia.includes(cap.mediaType);
-
-  if (!mediaMatch) {
-    return {
-      level: CompatibilityLevel.UNLIKELY,
-      message: 'Physical media mismatch',
-      details: [
-        `Protocol requires: ${req.supportedMedia.join(', ')}`,
-        `Cable provides: ${cap.mediaType}`,
-        'Non-standard configuration - verify with equipment vendor',
-      ],
-      requiresConfirmation: true,
-    };
-  }
-
-  const minRateRequired = req.minDataRate || 0;
-  if (cap.maxDataRate < minRateRequired) {
-    return {
-      level: CompatibilityLevel.UNLIKELY,
-      message: 'Insufficient data rate capacity',
-      details: [
-        `Protocol minimum: ${formatDataRate(minRateRequired)}`,
-        `Cable maximum: ${formatDataRate(cap.maxDataRate)}`,
-      ],
-      requiresConfirmation: true,
-    };
-  }
-
-  if (req.characteristicImpedance && cap.characteristicImpedance) {
-    const impedanceTolerance = 0.15;
-    const impedanceDiff = Math.abs(req.characteristicImpedance - cap.characteristicImpedance);
-    if (impedanceDiff > req.characteristicImpedance * impedanceTolerance) {
-      return {
-        level: CompatibilityLevel.COMPATIBLE,
-        message: 'Impedance mismatch detected',
-        details: [
-          `Protocol expects: ${req.characteristicImpedance}Ω`,
-          `Cable provides: ${cap.characteristicImpedance}Ω`,
-          'May cause signal reflections at high frequencies',
-        ],
-        requiresConfirmation: false,
-      };
-    }
-  }
-
-  if (req.shieldingRequired && cap.shielding === ShieldingType.UNSHIELDED) {
-    return {
-      level: CompatibilityLevel.COMPATIBLE,
-      message: 'Shielding recommended',
-      details: [
-        'Protocol specification recommends shielded cable',
-        'Unshielded may work in low-EMI environments',
-        'Consider environment before finalizing',
-      ],
-      requiresConfirmation: false,
-    };
-  }
-
-  return {
-    level: CompatibilityLevel.VERIFIED,
-    message: 'Verified compatible combination',
-    details: ['Physical layer requirements satisfied', 'Industry-standard configuration'],
-    requiresConfirmation: false,
-  };
-}
-
-export function getCompatibleProtocols(
-  cable: BaseCableDefinition,
-  allProtocols: BaseProtocolDefinition[]
-): Record<CompatibilityLevel, BaseProtocolDefinition[]> {
-  const result: Record<CompatibilityLevel, BaseProtocolDefinition[]> = {
-    [CompatibilityLevel.VERIFIED]: [],
-    [CompatibilityLevel.COMPATIBLE]: [],
-    [CompatibilityLevel.UNVERIFIED]: [],
-    [CompatibilityLevel.UNLIKELY]: [],
-    [CompatibilityLevel.PENDING]: [],
-  };
-
-  for (const protocol of allProtocols) {
-    if (protocol.isGeneric) continue;
-    const assessment = assessProtocolCableCompatibility(protocol, cable);
-    result[assessment.level].push(protocol);
-  }
-
-  return result;
-}
-
-export function getCompatibleCables(
-  protocol: BaseProtocolDefinition,
-  allCables: BaseCableDefinition[]
-): Record<CompatibilityLevel, BaseCableDefinition[]> {
-  const result: Record<CompatibilityLevel, BaseCableDefinition[]> = {
-    [CompatibilityLevel.VERIFIED]: [],
-    [CompatibilityLevel.COMPATIBLE]: [],
-    [CompatibilityLevel.UNVERIFIED]: [],
-    [CompatibilityLevel.UNLIKELY]: [],
-    [CompatibilityLevel.PENDING]: [],
-  };
-
-  for (const cable of allCables) {
-    if (cable.isGeneric) continue;
-    const assessment = assessProtocolCableCompatibility(protocol, cable);
-    result[assessment.level].push(cable);
-  }
-
-  return result;
-}
-
-// SECTION 9: HELPER FUNCTIONS
+// SECTION 7: HELPER FUNCTIONS
 
 export function formatDataRate(bps: number): string {
   if (bps >= 1_000_000_000) return `${bps / 1_000_000_000} Gbps`;
@@ -466,7 +309,7 @@ export function getAllProtocolCategories(): ProtocolCategory[] {
   return Object.values(ProtocolCategory);
 }
 
-export function getCategoryDisplayName(category: ProtocolCategory): string {
+export function getProtocolCategoryDisplayName(category: ProtocolCategory): string {
   const names: Record<ProtocolCategory, string> = {
     [ProtocolCategory.FIELDBUS_SERIAL]: 'Serial Fieldbus',
     [ProtocolCategory.FIELDBUS_ETHERNET]: 'Industrial Ethernet',
@@ -521,7 +364,7 @@ export function getProtocolCategoryGroups(): Record<string, ProtocolCategory[]> 
   };
 }
 
-// SECTION 10: MASTER COLLECTION EXPORT
+// SECTION 8: MASTER COLLECTION EXPORT
 
 import { FIELDBUS_PROTOCOLS } from './fieldbus-protocols';
 import { INDUSTRIAL_ETHERNET_PROTOCOLS } from './industrial-ethernet';

@@ -135,3 +135,31 @@ No auto-generated IDs enforced.
 
 ### Consequences
 [What are the implications?]
+
+<!-- Markdown -->
+<!-- File: Docs/decisions/ADR-001-protocol-cable-compatibility.md -->
+<!-- Action: APPEND the following section to the end of the existing file -->
+
+---
+
+## Amendment Log
+
+### Amendment 1 - 2025-01-14
+
+**Change:** Compatibility engine relocated from `protocols/index.ts` to `cables/index.ts`
+
+**Rationale:**
+- The question being answered is cable-centric: "Is this cable compatible with this protocol?"
+- Establishes clean one-way dependency: cables import from protocols, not vice versa
+- Protocols are foundational; cables serve protocols
+- Mirrors real-world workflow: protocol selected first, then compatible cables identified
+
+**Updated Implementation Files:**
+- `src/library/protocols/index.ts` - Protocol interfaces and definitions only
+- `src/library/cables/index.ts` - Cable interfaces, compatibility engine, and helpers
+- `src/library/cables/power-cables.ts` - Power cable definitions
+- `src/library/cables/control-cables.ts` - Control and instrumentation cables
+- `src/library/cables/communication-cables.ts` - Ethernet and fieldbus cables
+- `src/library/cables/fiber-optic-cables.ts` - Fiber optic cables
+
+**Impact:** None. API unchanged. Internal reorganization only.

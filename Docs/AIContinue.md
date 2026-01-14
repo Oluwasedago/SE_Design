@@ -4,7 +4,6 @@
 > **Version:** 2.3.0  
 > **Status:** Active Development
 
----
 
 ## 1. PROJECT OVERVIEW
 
@@ -24,12 +23,8 @@ The Industrial Signal Platform (ISP) is a desktop-native, local-first engineerin
 │ • Signal-Centric → OUTPUT→INPUT polarity validation at the core │
 └──────────────────────────────────────────────────────────────────────────────┘
 
-text
-
 ### Repository
 https://github.com/Oluwasedago/SE_Design.git
-
-text
 
 ---
 
@@ -53,8 +48,6 @@ industrial-signal-platform/
 │ └── scripts/ # Bundle generation scripts
 │ ├── bundle-for-ai.cjs # Creates single PROJECT_BUNDLE.md
 │ └── bundle-split.cjs # Creates category-split bundles
-
-text
 
 ### Bundle Categories & Sizes
 
@@ -87,22 +80,19 @@ Share the handover document (this file) first
 Share bundles in priority order based on task
 For Library Work (protocols, cables, devices):
 
-text
 Priority 1: BUNDLE_CORE.md (types foundation)
 Priority 2: BUNDLE_LIBRARY.md (existing patterns)
 Priority 3: BUNDLE_DOCS.md (context)
 For UI Work:
 
-text
 Priority 1: BUNDLE_RENDERER.md (components)
 Priority 2: BUNDLE_CORE.md (types)
 Priority 3: BUNDLE_LIBRARY.md (data structures)
 For Full Context:
 
-text
 Share PROJECT_BUNDLE.md (may need to split across messages)
 .gitignore Entry
-text
+
 # AI collaboration bundles (regenerate as needed)
 .ai/bundles/
 3. CURRENT STATUS SUMMARY
@@ -176,8 +166,8 @@ npm run build        # Production build
 npm run test         # Run tests (110+ passing)
 npm run test:watch   # Watch mode
 npx tsc --noEmit     # Type check only
+
 5. PROJECT STRUCTURE
-text
 industrial-signal-platform/
 │
 ├── .ai/                                # AI collaboration system
@@ -255,6 +245,7 @@ industrial-signal-platform/
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
+
 6. DEVICE LIBRARY DETAILS
 Template Count by File
 File	Templates	Contents
@@ -267,6 +258,7 @@ process-control.ts	19	DCS, I/O, workstations, servers
 oil-gas.ts	25	Wellhead, separators, compressors
 building-automation.ts	16	AHU, VAV, chiller, boiler, BAS
 TOTAL	111+	
+
 7. PROTOCOL LIBRARY DETAILS ✨ NEW
 Protocol Count by File
 File	Protocols	Contents
@@ -288,6 +280,7 @@ Tier	Description	Flags
 Library	Pre-defined, industry-standard	isUserDefined: false, isGeneric: false
 User-Defined	Custom, project-specific	isUserDefined: true, isGeneric: false
 Generic	Placeholder, pending specification	isUserDefined: false, isGeneric: true
+
 8. KEY INTERFACES
 BaseDeviceTemplate
 typescript
@@ -349,6 +342,7 @@ export interface PhysicalLayerRequirements {
   powerOverCable?: boolean;
   characteristicImpedance?: number;
 }
+
 9. KEY ENUMERATIONS
 DeviceCategory
 typescript
@@ -401,30 +395,36 @@ export enum CompatibilityLevel {
   UNLIKELY = 'UNLIKELY',
   PENDING = 'PENDING',
 }
+
 10. NEXT PRIORITIES
 Priority 1: Cable Library (5 files)
 Create src/library/cables/ folder with:
-
 File	Contents
 index.ts	Master exports, BaseCableDefinition interface, helpers
 power-cables.ts	LV/MV/HV power cables with ampacity tables
 control-cables.ts	Control, instrumentation, thermocouple extension
 communication-cables.ts	Cat5e/6/6A, fieldbus, serial
 fiber-optic-cables.ts	Single-mode, multi-mode, armored
+
 Priority 2: UI Updates
 Update UI to support protocol selection
 Update UI to support cable selection
 Generic Panels creation UI
 Generic Devices creation UI
+
 Priority 3: Infrastructure
 Electron shell implementation
 SQLite persistence layer
 File save/load (.isp files)
 Import/Export (Excel, CSV)
+
+Other questions that I need answers from you:
+4- Does my project need a “.env” file and how do we incorporate it?
+5- Do we need to create JavaScript/TypeScript rules like the cursor rules.
+
+
 11. SESSION START PROMPT
 Copy this to start a new session:
-
-text
 I'm continuing work on Industrial Signal Platform.
 
 ## Quick Context
