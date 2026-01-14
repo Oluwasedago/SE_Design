@@ -102,7 +102,7 @@ export const CABLE_CONTROL_PVC: BaseCableDefinition = {
   construction: [CableConstruction.STRANDED, CableConstruction.TRAY_RATED],
   insulation: InsulationType.PVC,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.LOW_600V,
+  voltageClass: CableVoltageClass.LOW_600V,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
     awgRange: '18 AWG - 10 AWG',
@@ -145,7 +145,7 @@ export const CABLE_CONTROL_SHIELDED: BaseCableDefinition = {
   construction: [CableConstruction.STRANDED, CableConstruction.TRAY_RATED],
   insulation: InsulationType.PVC,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.LOW_600V,
+  voltageClass: CableVoltageClass.LOW_600V,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
     awgRange: '18 AWG - 10 AWG',
@@ -188,7 +188,7 @@ export const CABLE_CONTROL_FLEXIBLE: BaseCableDefinition = {
   construction: [CableConstruction.EXTRA_FLEXIBLE],
   insulation: InsulationType.TPE,
   jacket: JacketType.PUR,
-  CableVoltageClass: CableVoltageClass.LOW_300V,
+  voltageClass: CableVoltageClass.LOW_300V,
   conductorSpec: {
     material: ConductorMaterial.TINNED_COPPER,
     awgRange: '22 AWG - 16 AWG',
@@ -252,7 +252,7 @@ export const CABLE_INST_TWISTED_PAIR: BaseCableDefinition = {
   construction: [CableConstruction.STRANDED, CableConstruction.TRAY_RATED, CableConstruction.ARMORED],
   insulation: InsulationType.PE,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.LOW_300V,
+  voltageClass: CableVoltageClass.LOW_300V,
   conductorSpec: {
     material: ConductorMaterial.TINNED_COPPER,
     awgRange: '16 AWG',
@@ -297,7 +297,7 @@ export const CABLE_INST_MULTI_PAIR: BaseCableDefinition = {
   construction: [CableConstruction.STRANDED, CableConstruction.TRAY_RATED, CableConstruction.ARMORED],
   insulation: InsulationType.PE,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.LOW_300V,
+  voltageClass: CableVoltageClass.LOW_300V,
   conductorSpec: {
     material: ConductorMaterial.TINNED_COPPER,
     awgRange: '16 AWG',
@@ -342,7 +342,7 @@ export const CABLE_INST_TRIAD: BaseCableDefinition = {
   construction: [CableConstruction.STRANDED, CableConstruction.TRAY_RATED],
   insulation: InsulationType.PE,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.LOW_300V,
+  voltageClass: CableVoltageClass.LOW_300V,
   conductorSpec: {
     material: ConductorMaterial.TINNED_COPPER,
     awgRange: '16 AWG - 18 AWG',
@@ -412,7 +412,7 @@ export const CABLE_TC_TYPE_K: BaseCableDefinition = {
   construction: [CableConstruction.STRANDED],
   insulation: InsulationType.FEP,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
     awgRange: '20 AWG - 16 AWG',
@@ -481,7 +481,7 @@ export const CABLE_TC_TYPE_J: BaseCableDefinition = {
   construction: [CableConstruction.STRANDED],
   insulation: InsulationType.FEP,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
     awgRange: '20 AWG - 16 AWG',
@@ -549,7 +549,7 @@ export const CABLE_TC_TYPE_T: BaseCableDefinition = {
   construction: [CableConstruction.STRANDED],
   insulation: InsulationType.FEP,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
     awgRange: '20 AWG - 16 AWG',

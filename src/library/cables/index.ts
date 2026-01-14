@@ -202,7 +202,7 @@ export interface BaseCableDefinition {
   construction: CableConstruction[];
   insulation: InsulationType;
   jacket: JacketType;
-  CableVoltageClass: CableVoltageClass;
+  voltageClass: CableVoltageClass;
   conductorSpec: ConductorSpec;
   conductorCount: number | string;
   pairCount?: number;
@@ -242,7 +242,7 @@ export const GENERIC_CABLE_TEMPLATE: BaseCableDefinition = {
   construction: [],
   insulation: InsulationType.PVC,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.LOW_600V,
+  voltageClass: CableVoltageClass.LOW_600V,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },
@@ -277,7 +277,7 @@ export const USER_DEFINED_CABLE_TEMPLATE: BaseCableDefinition = {
   construction: [],
   insulation: InsulationType.PVC,
   jacket: JacketType.PVC,
-  CableVoltageClass: CableVoltageClass.LOW_600V,
+  voltageClass: CableVoltageClass.LOW_600V,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },

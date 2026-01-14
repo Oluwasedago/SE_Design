@@ -1,7 +1,7 @@
 # Industrial Signal Platform - AI Continuation Guide
 
-> **Last Updated:** 2025-01-13  
-> **Version:** 2.3.0  
+> **Last Updated:** 2025-01-14  
+> **Version:** 2.4.0  
 > **Status:** Active Development
 
 
@@ -17,10 +17,10 @@ The Industrial Signal Platform (ISP) is a desktop-native, local-first engineerin
 
 ### Core Philosophy
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ • Local-First → Resilience against network failure │
-│ • Type-Safe → Strict TypeScript enforcement for data integrity │
-│ • High-Density → Optimized for complex engineering workflows │
-│ • Signal-Centric → OUTPUT→INPUT polarity validation at the core │
+│ • Local-First → Resilience against network failure                          │
+│ • Type-Safe  → Strict TypeScript enforcement for data integrity             │
+│ • High-Density → Optimized for complex engineering workflows                │
+│ • Signal-Centric → OUTPUT→INPUT polarity validation at the core             │
 └──────────────────────────────────────────────────────────────────────────────┘
 
 ### Repository
@@ -34,31 +34,61 @@ https://github.com/Oluwasedago/SE_Design.git
 
 A bundle-based system for sharing full project code with AI assistants via web interfaces where direct file system access is not available.
 
+### Key Files
+|
+ File 
+|
+ Purpose 
+|
+|
+------
+|
+---------
+|
+|
+`CLAUDE.md`
+|
+ AI collaboration rules and coding standards 
+|
+|
+`Docs/AIContinue.md`
+|
+ This file - project handover document 
+|
+|
+`Docs/decisions/*.md`
+|
+ Architecture Decision Records 
+|
+
 ### Folder Structure
 industrial-signal-platform/
 ├── .ai/ # AI collaboration files
 │ ├── bundles/ # Generated bundles (gitignored)
-│ │ ├── BUNDLE_CORE.md # Core types & engine (159 KB)
-│ │ ├── BUNDLE_LIBRARY.md # Device templates (665 KB)
-│ │ ├── BUNDLE_DOCS.md # Documentation (44 KB)
-│ │ ├── BUNDLE_RENDERER.md # UI components (396 KB)
-│ │ ├── BUNDLE_ROOT.md # Config files (1306 KB)
-│ │ ├── BUNDLE_SRC_OTHER.md # Other source (0.26 KB)
+│ │ ├── BUNDLE_CORE.md # Core types & engine
+│ │ ├── BUNDLE_LIBRARY.md # Device + Protocol + Cable templates
+│ │ ├── BUNDLE_DOCS.md # Documentation
+│ │ ├── BUNDLE_RENDERER.md # UI components
+│ │ ├── BUNDLE_ROOT.md # Config files
 │ │ └── PROJECT_BUNDLE.md # Full project bundle
 │ └── scripts/ # Bundle generation scripts
-│ ├── bundle-for-ai.cjs # Creates single PROJECT_BUNDLE.md
-│ └── bundle-split.cjs # Creates category-split bundles
+├── CLAUDE.md # AI collaboration rules ✨ NEW
+└── Docs/
+├── decisions/ # Architecture Decision Records
+└── AIContinue.md # This file
+
+text
 
 ### Bundle Categories & Sizes
 
-| Category   | Files | Size       | Contents                          |
-|------------|-------|------------|-----------------------------------|
-| CORE       | 12    | 159.79 KB  | Types, engine, services, tests    |
-| LIBRARY    | 14    | ~800 KB    | Device + Protocol templates       |
-| DOCS       | 5     | ~60 KB     | AIContinue, roadmap, README, ADRs |
-| RENDERER   | 29    | 396.96 KB  | React components, stores, hooks   |
-| ROOT       | 8     | 1306.57 KB | package.json, configs, workspace  |
-| SRC_OTHER  | 2     | 0.26 KB    | main.tsx, vite-env.d.ts           |
+| Category   | Files | Size       | Contents                               |
+|------------|-------|------------|----------------------------------------|
+| CORE       | 12    | ~160 KB    | Types, engine, services, tests         |
+| LIBRARY    | 22    | ~1.2 MB    | Device + Protocol + Cable templates    |
+| DOCS       | 6     | ~80 KB     | AIContinue, roadmap, README, ADRs      |
+| RENDERER   | 29    | ~400 KB    | React components, stores, hooks        |
+| ROOT       | 8     | ~1.3 MB    | package.json, configs, workspace       |
+| SRC_OTHER  | 2     | ~0.3 KB    | main.tsx, vite-env.d.ts                |
 
 ### How to Regenerate Bundles
 
@@ -92,7 +122,7 @@ For Full Context:
 
 Share PROJECT_BUNDLE.md (may need to split across messages)
 .gitignore Entry
-
+text
 # AI collaboration bundles (regenerate as needed)
 .ai/bundles/
 3. CURRENT STATUS SUMMARY
@@ -107,6 +137,7 @@ Signal connections with OUTPUT→INPUT validation	✅ Complete
 Audit trail logging	✅ Complete
 110+ passing tests	✅ Complete
 AI collaboration bundle system	✅ Complete
+CLAUDE.md AI rules document	✅ Complete
 Device Library (111+ Templates)
 File	Status	Templates
 index.ts	✅	Master exports + interfaces + helpers
@@ -118,15 +149,22 @@ process-instrumentation.ts	✅	26 templates (PT, TT, FT, LT, valves)
 process-control.ts	✅	19 templates (DCS, I/O, servers)
 oil-gas.ts	✅	25 templates (wellhead, separators)
 building-automation.ts	✅	16 templates (HVAC, BAS, lighting)
-Protocol Library (32 Protocols) ✨ NEW
+Protocol Library (32 Protocols)
 File	Status	Protocols
-index.ts	✅	Interfaces, enums, compatibility engine
+index.ts	✅	Interfaces, enums, helpers
 fieldbus-protocols.ts	✅	11 protocols (Modbus, HART, FF, PROFIBUS, etc.)
 industrial-ethernet.ts	✅	8 protocols (PROFINET, EtherNet/IP, EtherCAT, etc.)
 power-system-protocols.ts	✅	10 protocols (IEC 61850, DNP3, IEC 60870, etc.)
+Cable Library (38 Cables) ✨ NEW
+File	Status	Cables
+index.ts	✅	Interfaces, enums, compatibility engine, ampacity tables
+power-cables.ts	✅	9 cables (THHN, XHHW, MC, SOOW, VFD, MV-15kV, MV-35kV, TC, PLTC)
+control-cables.ts	✅	9 cables (control PVC/shielded/flex, instrumentation, thermocouple K/J/T)
+communication-cables.ts	✅	12 cables (Cat5e, Cat6, Cat6A, Industrial Ethernet, PROFIBUS, DeviceNet, FF, Modbus, CAN, AS-i, RS-232)
+fiber-optic-cables.ts	✅	8 cables (OS2 indoor/outdoor, OM3, OM4, industrial MM/SM, hybrid, tactical)
 Architecture Decision Records
 ADR	Status	Topic
-ADR-001	✅	Protocol-Cable Compatibility System
+ADR-001	✅	Protocol-Cable Compatibility System (amended 2025-01-14)
 ADR-002	✅	Three-Tier Template System
 🔲 PENDING WORK
 Infrastructure
@@ -137,17 +175,9 @@ File save/load (.isp files)	🔲 Pending
 Import/Export (Excel, CSV)	🔲 Pending
 Application Features
 Item	Status
-UI update for protocols/cables selection	🔲 Pending
+UI update for protocols/cables selection	🔲 Next Priority
 Generic Panels creation UI	🔲 Pending
 Generic Devices creation UI	🔲 Pending
-Library Files - NEXT PRIORITY
-Library	Files	Status
-Cable Library	5 files	🔲 Next Priority
-└── index.ts		🔲 Pending
-└── power-cables.ts	LV/MV/HV, ampacities	🔲 Pending
-└── control-cables.ts	Control, instrumentation, TC	🔲 Pending
-└── communication-cables.ts	Ethernet, fieldbus, serial	🔲 Pending
-└── fiber-optic-cables.ts	SM, MM, armored	🔲 Pending
 4. TECH STACK & COMMANDS
 Technology Versions
 Technology	Version
@@ -166,8 +196,8 @@ npm run build        # Production build
 npm run test         # Run tests (110+ passing)
 npm run test:watch   # Watch mode
 npx tsc --noEmit     # Type check only
-
 5. PROJECT STRUCTURE
+text
 industrial-signal-platform/
 │
 ├── .ai/                                # AI collaboration system
@@ -181,6 +211,8 @@ industrial-signal-platform/
 │   │   └── ADR-002-three-tier-template-system.md
 │   ├── AIContinue.md                   # THIS FILE - Handover document
 │   └── roadmap.md                      # Project roadmap
+│
+├── CLAUDE.md                           # ✨ AI collaboration rules
 │
 ├── electron/                           # 🔲 Empty - Electron shell planned
 │
@@ -206,8 +238,9 @@ industrial-signal-platform/
 │   │   └── repositories/
 │   │
 │   ├── library/                        # ⚡ DEVICE/PROTOCOL/CABLE LIBRARIES
+│   │   ├── index.ts                    # Master library exports
 │   │   │
-│   │   ├── devices/                    # ✅ COMPLETE (8 files, 111+ templates)
+│   │   ├── devices/                    # ✅ COMPLETE (9 files, 111+ templates)
 │   │   │   ├── index.ts
 │   │   │   ├── power-systems.ts
 │   │   │   ├── substations-protection.ts
@@ -219,13 +252,17 @@ industrial-signal-platform/
 │   │   │   └── building-automation.ts
 │   │   │
 │   │   ├── protocols/                  # ✅ COMPLETE (4 files, 32 protocols)
-│   │   │   ├── index.ts                # Interfaces, enums, compatibility engine
-│   │   │   ├── fieldbus-protocols.ts   # Modbus, HART, FF, PROFIBUS, etc.
-│   │   │   ├── industrial-ethernet.ts  # PROFINET, EtherNet/IP, EtherCAT, etc.
-│   │   │   └── power-system-protocols.ts # IEC 61850, DNP3, IEC 60870, etc.
+│   │   │   ├── index.ts                # Interfaces, enums, helpers
+│   │   │   ├── fieldbus-protocols.ts
+│   │   │   ├── industrial-ethernet.ts
+│   │   │   └── power-system-protocols.ts
 │   │   │
-│   │   └── cables/                     # 🔲 TODO - Next priority
-│   │       └── index.ts                # Placeholder
+│   │   └── cables/                     # ✅ COMPLETE (5 files, 38 cables)
+│   │       ├── index.ts                # Interfaces, enums, compatibility engine
+│   │       ├── power-cables.ts
+│   │       ├── control-cables.ts
+│   │       ├── communication-cables.ts
+│   │       └── fiber-optic-cables.ts
 │   │
 │   ├── renderer/
 │   │   ├── components/
@@ -245,7 +282,6 @@ industrial-signal-platform/
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
-
 6. DEVICE LIBRARY DETAILS
 Template Count by File
 File	Templates	Contents
@@ -258,16 +294,23 @@ process-control.ts	19	DCS, I/O, workstations, servers
 oil-gas.ts	25	Wellhead, separators, compressors
 building-automation.ts	16	AHU, VAV, chiller, boiler, BAS
 TOTAL	111+	
-
-7. PROTOCOL LIBRARY DETAILS ✨ NEW
+7. PROTOCOL LIBRARY DETAILS
 Protocol Count by File
 File	Protocols	Contents
 fieldbus-protocols.ts	11	Modbus RTU/ASCII, HART, WirelessHART, FF-H1, PROFIBUS DP/PA, DeviceNet, CANopen, AS-i, IO-Link
 industrial-ethernet.ts	8	PROFINET, EtherNet/IP, EtherCAT, Modbus TCP, POWERLINK, OPC UA, MQTT, CC-Link IE
 power-system-protocols.ts	10	IEC 61850, DNP3 Serial/TCP, IEC 60870-5-101/104, IEEE C37.118, IEC 62351, ICCP, SunSpec, IEEE 2030.5
 TOTAL	32	
+8. CABLE LIBRARY DETAILS ✨ NEW
+Cable Count by File
+File	Cables	Contents
+power-cables.ts	9	THHN/THWN, XHHW, MC, SOOW, VFD, MV-90 15kV, MV-105 35kV, TC Tray, PLTC
+control-cables.ts	9	Control PVC, Control Shielded, Control Flexible, Instrumentation TP/MP/Triad, TC Type K/J/T
+communication-cables.ts	12	Cat5e, Cat6, Cat6A S/FTP, Industrial Ethernet, PROFIBUS DP/PA, DeviceNet, FF-H1, Modbus RS-485, CANopen, AS-i, RS-232
+fiber-optic-cables.ts	8	OS2 Indoor, OS2 Outdoor Armored, OM3, OM4, Industrial MM, Industrial SM, Hybrid Fiber-Power, Tactical
+TOTAL	38	
 Compatibility System
-The protocol library includes a soft validation compatibility engine:
+The cable library includes the protocol-cable compatibility engine (moved from protocols per ADR-001 amendment):
 
 Level	Icon	Meaning
 VERIFIED	✅	Industry-standard combination
@@ -275,13 +318,15 @@ COMPATIBLE	⚠️	Works with minor advisories
 UNVERIFIED	❓	User-defined, not in library
 UNLIKELY	⛔	Physical mismatch, needs confirmation
 PENDING	📋	Generic placeholder, needs specification
+Ampacity Reference Tables
+NEC_TABLE_310_16 - NEC ampacity table for AWG/kcmil sizes
+IEC_60364_COPPER_PVC - IEC ampacity table for mm² sizes
 Three-Tier Template System
 Tier	Description	Flags
 Library	Pre-defined, industry-standard	isUserDefined: false, isGeneric: false
 User-Defined	Custom, project-specific	isUserDefined: true, isGeneric: false
 Generic	Placeholder, pending specification	isUserDefined: false, isGeneric: true
-
-8. KEY INTERFACES
+9. KEY INTERFACES
 BaseDeviceTemplate
 typescript
 export interface BaseDeviceTemplate {
@@ -329,21 +374,52 @@ export interface BaseProtocolDefinition {
   isGeneric: boolean;
   isDeprecated: boolean;
 }
-PhysicalLayerRequirements
+BaseCableDefinition ✨ NEW
 typescript
-export interface PhysicalLayerRequirements {
-  supportedMedia: PhysicalMediaType[];
-  minDataRate?: number;
-  maxDistance?: Partial<Record<PhysicalMediaType, number>>;
-  connectorTypes?: ConnectorType[];
-  shieldingRequired?: boolean;
-  terminationRequired?: boolean;
-  terminationResistance?: number;
-  powerOverCable?: boolean;
-  characteristicImpedance?: number;
+export interface BaseCableDefinition {
+  cableId: string;
+  name: string;
+  category: CableCategory;
+  description: string;
+  physicalCapabilities: PhysicalLayerCapabilities;
+  construction: CableConstruction[];
+  insulation: InsulationType;
+  jacket: JacketType;
+  voltageClass: CableVoltageClass;
+  conductorSpec: ConductorSpec;
+  conductorCount: number | string;
+  pairCount?: number;
+  temperatureRating: TemperatureRating;
+  mechanicalProperties?: MechanicalProperties;
+  ampacity?: AmpacityTable;
+  industries: string[];
+  standards: string[];
+  certifications?: string[];
+  manufacturer?: string;
+  partNumberPattern?: string;
+  attributes: CableAttribute[];
+  typicalApplications: string[];
+  icon: string;
+  isUserDefined: boolean;
+  isGeneric: boolean;
+  isDeprecated: boolean;
+  version: string;
 }
-
-9. KEY ENUMERATIONS
+PhysicalLayerCapabilities ✨ NEW
+typescript
+export interface PhysicalLayerCapabilities {
+  mediaType: PhysicalMediaType;
+  maxDataRate: number;
+  maxDistance: number;
+  connectorTypes: ConnectorType[];
+  shielding: ShieldingType;
+  characteristicImpedance?: number;
+  capacitance?: number;
+  attenuation?: number;
+  supportsPoE?: boolean;
+  supportsPowerOverFieldbus?: boolean;
+}
+10. KEY ENUMERATIONS
 DeviceCategory
 typescript
 export enum DeviceCategory {
@@ -386,6 +462,36 @@ export enum ProtocolCategory {
   USER_DEFINED = 'USER_DEFINED',
   GENERIC = 'GENERIC',
 }
+CableCategory ✨ NEW
+typescript
+export enum CableCategory {
+  POWER_LV = 'POWER_LV',
+  POWER_MV = 'POWER_MV',
+  POWER_HV = 'POWER_HV',
+  CONTROL = 'CONTROL',
+  INSTRUMENTATION = 'INSTRUMENTATION',
+  THERMOCOUPLE = 'THERMOCOUPLE',
+  COMMUNICATION_COPPER = 'COMMUNICATION_COPPER',
+  COMMUNICATION_FIELDBUS = 'COMMUNICATION_FIELDBUS',
+  FIBER_SINGLE_MODE = 'FIBER_SINGLE_MODE',
+  FIBER_MULTI_MODE = 'FIBER_MULTI_MODE',
+  SPECIALTY = 'SPECIALTY',
+  USER_DEFINED = 'USER_DEFINED',
+  GENERIC = 'GENERIC',
+}
+CableVoltageClass ✨ NEW
+typescript
+export enum CableVoltageClass {
+  EXTRA_LOW = 'EXTRA_LOW',
+  LOW_300V = 'LOW_300V',
+  LOW_600V = 'LOW_600V',
+  LOW_1000V = 'LOW_1000V',
+  MEDIUM_5KV = 'MEDIUM_5KV',
+  MEDIUM_15KV = 'MEDIUM_15KV',
+  MEDIUM_25KV = 'MEDIUM_25KV',
+  MEDIUM_35KV = 'MEDIUM_35KV',
+  HIGH = 'HIGH',
+}
 CompatibilityLevel
 typescript
 export enum CompatibilityLevel {
@@ -395,36 +501,25 @@ export enum CompatibilityLevel {
   UNLIKELY = 'UNLIKELY',
   PENDING = 'PENDING',
 }
-
-10. NEXT PRIORITIES
-Priority 1: Cable Library (5 files)
-Create src/library/cables/ folder with:
-File	Contents
-index.ts	Master exports, BaseCableDefinition interface, helpers
-power-cables.ts	LV/MV/HV power cables with ampacity tables
-control-cables.ts	Control, instrumentation, thermocouple extension
-communication-cables.ts	Cat5e/6/6A, fieldbus, serial
-fiber-optic-cables.ts	Single-mode, multi-mode, armored
-
-Priority 2: UI Updates
-Update UI to support protocol selection
-Update UI to support cable selection
+11. NEXT PRIORITIES
+Priority 1: UI Updates
+Update UI to support protocol selection in device configuration
+Update UI to support cable selection for connections
+Add compatibility indicator in connection editor
+Priority 2: Generic Item Creation UI
 Generic Panels creation UI
 Generic Devices creation UI
-
+Generic Cables creation UI
+Generic Protocols creation UI
 Priority 3: Infrastructure
 Electron shell implementation
 SQLite persistence layer
 File save/load (.isp files)
 Import/Export (Excel, CSV)
-
-Other questions that I need answers from you:
-4- Does my project need a “.env” file and how do we incorporate it?
-5- Do we need to create JavaScript/TypeScript rules like the cursor rules.
-
-
-11. SESSION START PROMPT
+12. SESSION START PROMPT
 Copy this to start a new session:
+
+text
 I'm continuing work on Industrial Signal Platform.
 
 ## Quick Context
@@ -436,35 +531,39 @@ I'm continuing work on Industrial Signal Platform.
 https://github.com/Oluwasedago/SE_Design.git (public)
 
 ## AI Collaboration System
-Project has bundle system in .ai/ folder. Regenerate before sharing:
-  node .ai/scripts/bundle-split.cjs
+- Read CLAUDE.md for coding rules and patterns
+- Project has bundle system in .ai/ folder
+- Regenerate before sharing: node .ai/scripts/bundle-split.cjs
 
 ## Current Session Goal
-[STATE YOUR GOAL HERE - e.g., "Cable Library implementation"]
+[STATE YOUR GOAL HERE - e.g., "UI update for cable selection"]
 
-## Completed
-- ✅ Device Library (111+ templates across 8 files)
+## Completed Libraries
+- ✅ Device Library (111+ templates across 9 files)
 - ✅ Protocol Library (32 protocols across 4 files)
+- ✅ Cable Library (38 cables across 5 files)
 - ✅ Protocol-Cable compatibility engine
 
 ## Bundles to Share
 Based on task, share in order:
-- BUNDLE_CORE.md (159 KB) - Types & engine
-- BUNDLE_LIBRARY.md (~800 KB) - Device + Protocol templates
-- BUNDLE_DOCS.md (~60 KB) - Documentation
+- BUNDLE_CORE.md - Types & engine
+- BUNDLE_LIBRARY.md - Device + Protocol + Cable templates
+- BUNDLE_DOCS.md - Documentation
 
 ## Key Constraints
-- Follow existing patterns from device/protocol files
-- Include industry standards references
+- Follow CLAUDE.md rules
+- Follow existing patterns from library files
 - TypeScript strict mode compliance
 - NO ASSUMPTIONS - ask for clarification
-12. FILE REFERENCE GUIDE
+13. FILE REFERENCE GUIDE
 Need To...	File to Modify
 Add device template	src/library/devices/[category].ts
 Add DeviceCategory	src/library/devices/index.ts
 Add protocol definition	src/library/protocols/[type].ts
 Add ProtocolCategory	src/library/protocols/index.ts
 Add cable specification	src/library/cables/[type].ts
+Add CableCategory	src/library/cables/index.ts
+Check protocol-cable compatibility	src/library/cables/index.ts
 Add UI state	src/renderer/App.tsx
 Add signal type	src/core/types/signalCategories.ts
 Add entity type	src/core/types/index.ts
@@ -472,7 +571,8 @@ Add validation rule	src/core/engine/ConnectionValidator.ts
 Modify IDE workspace	src/renderer/components/Workspace/*.tsx
 Regenerate AI bundles	node .ai/scripts/bundle-split.cjs
 Add architecture decision	Docs/decisions/ADR-XXX-*.md
-13. STANDARDS REFERENCED
+Update AI rules	CLAUDE.md
+14. STANDARDS REFERENCED
 By Device File
 File	Standards
 process-instrumentation.ts	ISA 5.1, IEC 61508, IEC 61511, IEC 60534, IEC 61298, IEC 60751, IEC 60584, API, ASTM
@@ -484,7 +584,13 @@ File	Standards
 fieldbus-protocols.ts	IEC 61158, IEC 61784, Modbus Specification, HART Protocol, CiA 301/402
 industrial-ethernet.ts	IEC 61158, IEC 61784-2, IEEE 802.3, OPC UA Specification
 power-system-protocols.ts	IEC 61850, IEC 60870-5, IEEE 1815 (DNP3), IEEE C37.118, IEC 62351
-14. GLOBAL TODO LIST
+By Cable File ✨ NEW
+File	Standards
+power-cables.ts	UL 83, UL 44, UL 1569, UL 62, UL 1072, UL 1277, NEC Article 310/330/336, ICEA, AEIC
+control-cables.ts	UL 2587, ISA S50.1, ICEA S-82-552, ANSI/ISA-MC96.1, IEC 60584-3
+communication-cables.ts	TIA/EIA-568, ISO/IEC 11801, IEC 61158, PROFIBUS/ODVA/FF specifications
+fiber-optic-cables.ts	TIA-568.3-D, ITU-T G.652.D, IEC 60793, IEC 60794, Telcordia GR-20
+15. GLOBAL TODO LIST
 Completed ✅
  Create process-instrumentation.ts (26 templates)
  Create process-control.ts (19 templates)
@@ -497,19 +603,26 @@ Completed ✅
  Create industrial-ethernet.ts (8 protocols)
  Create power-system-protocols.ts (10 protocols)
  Create Architecture Decision Records (ADR-001, ADR-002)
+ Create cables/index.ts with interfaces, enums, and compatibility engine
+ Create power-cables.ts (9 cables)
+ Create control-cables.ts (9 cables)
+ Create communication-cables.ts (12 cables)
+ Create fiber-optic-cables.ts (8 cables)
+ Create CLAUDE.md AI collaboration rules
+ Amend ADR-001 for compatibility engine relocation
 Pending 🔲
- Create cables folder and files (5 files)
  Update UI for protocol/cable selection
  Generic Panels creation UI
  Generic Devices creation UI
+ Generic Cables creation UI
  Electron shell implementation
  SQLite persistence layer
  File save/load (.isp files)
  Import/Export (Excel, CSV)
-15. VERSION HISTORY
+16. VERSION HISTORY
 Version	Date	Changes
 2.0.0	2025-01-11	Added 86 device templates across 4 new files
 2.1.0	2025-01-11	Updated index.ts, added helper functions
 2.2.0	2025-01-12	Added AI collaboration bundle system
 2.3.0	2025-01-13	Added Protocol Library (32 protocols, 4 files), ADR system
-End of Document
+2.4.0	2025-01-14	Added Cable Library (38 cables, 5 files), CLAUDE.md, ADR-001 amendment

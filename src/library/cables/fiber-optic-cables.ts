@@ -108,7 +108,7 @@ export const CABLE_SM_OS2_INDOOR: BaseCableDefinition = {
   construction: [CableConstruction.PLENUM],
   insulation: InsulationType.PVC,
   jacket: JacketType.LSZH,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },
@@ -171,7 +171,7 @@ export const CABLE_SM_OS2_OUTDOOR: BaseCableDefinition = {
   construction: [CableConstruction.ARMORED, CableConstruction.DIRECT_BURIAL, CableConstruction.OUTDOOR],
   insulation: InsulationType.PE,
   jacket: JacketType.PE,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },
@@ -242,7 +242,7 @@ export const CABLE_MM_OM3: BaseCableDefinition = {
   construction: [CableConstruction.PLENUM, CableConstruction.RISER],
   insulation: InsulationType.PVC,
   jacket: JacketType.LSZH,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },
@@ -296,7 +296,7 @@ export const CABLE_MM_OM4: BaseCableDefinition = {
   construction: [CableConstruction.PLENUM, CableConstruction.RISER],
   insulation: InsulationType.PVC,
   jacket: JacketType.LSZH,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },
@@ -362,7 +362,7 @@ export const CABLE_INDUSTRIAL_MM: BaseCableDefinition = {
   construction: [CableConstruction.OUTDOOR, CableConstruction.TRAY_RATED],
   insulation: InsulationType.PVC,
   jacket: JacketType.PUR,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },
@@ -428,7 +428,7 @@ export const CABLE_INDUSTRIAL_SM: BaseCableDefinition = {
   construction: [CableConstruction.ARMORED, CableConstruction.OUTDOOR, CableConstruction.TRAY_RATED],
   insulation: InsulationType.PE,
   jacket: JacketType.PE,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },
@@ -497,7 +497,7 @@ export const CABLE_HYBRID_FIBER_POWER: BaseCableDefinition = {
   construction: [CableConstruction.OUTDOOR, CableConstruction.ARMORED],
   insulation: InsulationType.XLPE,
   jacket: JacketType.PUR,
-  CableVoltageClass: CableVoltageClass.LOW_600V,
+  voltageClass: CableVoltageClass.LOW_600V,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
     awgRange: '14 AWG - 10 AWG (Power)',
@@ -572,7 +572,7 @@ export const CABLE_TACTICAL_FIBER: BaseCableDefinition = {
   construction: [CableConstruction.EXTRA_FLEXIBLE, CableConstruction.OUTDOOR, CableConstruction.ARMORED],
   insulation: InsulationType.PUR,
   jacket: JacketType.PUR,
-  CableVoltageClass: CableVoltageClass.EXTRA_LOW,
+  voltageClass: CableVoltageClass.EXTRA_LOW,
   conductorSpec: {
     material: ConductorMaterial.COPPER,
   },
