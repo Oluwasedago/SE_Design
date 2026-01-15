@@ -1,6 +1,9 @@
-<!-- Markdown -->
-<!-- File: Docs/decisions/README.md -->
 
+---
+
+## Document 4: Updated ADR README (Docs/decisions/README.md)
+
+```markdown
 # Architecture Decision Records
 
 This directory contains Architecture Decision Records (ADRs) documenting
@@ -19,6 +22,8 @@ built, but WHY.
 |-----|-------|--------|------|
 | [ADR-001](ADR-001-protocol-cable-compatibility.md) | Protocol-Cable Compatibility System | ✅ Approved | 2025-01-13 |
 | [ADR-002](ADR-002-three-tier-template-system.md) | Three-Tier Template System | ✅ Approved | 2025-01-13 |
+| [ADR-003](ADR-003-signal-architecture.md) | Signal Architecture Model | ✅ Approved | 2025-01-16 |
+| [ADR-004](ADR-004-ui-architecture.md) | UI Architecture | ✅ Approved | 2025-01-16 |
 
 ## Creating New ADRs
 
