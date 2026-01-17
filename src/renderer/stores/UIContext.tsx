@@ -1,5 +1,7 @@
+// typescript
 // src/renderer/stores/UIContext.tsx
 // UI state management with React Context
+// Extended with connection mode and cabinet selection for Phase 1
 // ═══════════════════════════════════════════════════════════════════════════
 
 import React, {
@@ -17,12 +19,18 @@ import React, {
 
 export type ViewMode = 'canvas' | 'table' | 'split';
 export type SidebarPanel = 'project' | 'library' | 'search';
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'dark' | 'light' | 'system';
 
 export interface PanelSizes {
   leftSidebar: number;
   rightSidebar: number;
   bottomPanel: number;
+}
+
+export interface PendingConnection {
+  deviceId: string;
+  signalId: string;
+  cabinetId?: string;
 }
 
 export interface UIState {
@@ -39,9 +47,14 @@ export interface UIState {
   panelSizes: PanelSizes;
   
   // Selection
+  selectedCabinetIds: string[];
   selectedDeviceIds: string[];
   selectedConnectionIds: string[];
   selectedSignalId: string | null;
+  
+  // Connection Mode
+  connectionMode: boolean;
+  pendingConnection: PendingConnection | null;
   
   // Canvas
   canvasZoom: number;
@@ -65,6 +78,9 @@ export interface UIState {
     message: string;
     timestamp: Date;
   }>;
+  
+  // Expanded items in tree
+  expandedTreeItems: Set<string>;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -72,29 +88,53 @@ export interface UIState {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export type UIAction =
+  // View actions
   | { type: 'SET_VIEW_MODE'; payload: ViewMode }
   | { type: 'SET_ACTIVE_TAB'; payload: string }
   | { type: 'ADD_TAB'; payload: { id: string; title: string; type: 'canvas' | 'table' | 'properties' } }
   | { type: 'CLOSE_TAB'; payload: string }
+  // Panel actions
   | { type: 'TOGGLE_LEFT_SIDEBAR' }
   | { type: 'TOGGLE_RIGHT_SIDEBAR' }
   | { type: 'TOGGLE_BOTTOM_PANEL' }
   | { type: 'SET_SIDEBAR_PANEL'; payload: SidebarPanel }
   | { type: 'SET_PANEL_SIZE'; payload: { panel: keyof PanelSizes; size: number } }
-  | { type: 'SET_SELECTION'; payload: { deviceIds?: string[]; connectionIds?: string[]; signalId?: string | null } }
+  // Selection actions
+  | { type: 'SET_SELECTED_CABINETS'; payload: string[] }
+  | { type: 'SET_SELECTED_DEVICES'; payload: string[] }
+  | { type: 'SET_SELECTED_CONNECTIONS'; payload: string[] }
+  | { type: 'SET_SELECTED_SIGNAL'; payload: string | null }
+  | { type: 'SET_SELECTION'; payload: { 
+      cabinetIds?: string[]; 
+      deviceIds?: string[]; 
+      connectionIds?: string[]; 
+      signalId?: string | null 
+    } 
+  }
   | { type: 'CLEAR_SELECTION' }
+  // Connection mode actions
+  | { type: 'SET_CONNECTION_MODE'; payload: boolean }
+  | { type: 'SET_PENDING_CONNECTION'; payload: PendingConnection | null }
+  // Canvas actions
   | { type: 'SET_CANVAS_ZOOM'; payload: number }
   | { type: 'SET_CANVAS_POSITION'; payload: { x: number; y: number } }
   | { type: 'TOGGLE_GRID' }
   | { type: 'TOGGLE_SNAP_TO_GRID' }
+  // Theme actions
   | { type: 'SET_THEME'; payload: Theme }
   | { type: 'TOGGLE_MINIMAP' }
   | { type: 'TOGGLE_STATUS_BAR' }
+  // Modal actions
   | { type: 'OPEN_MODAL'; payload: { modal: string; data?: Record<string, unknown> } }
   | { type: 'CLOSE_MODAL' }
+  // Notification actions
   | { type: 'ADD_NOTIFICATION'; payload: { type: 'info' | 'success' | 'warning' | 'error'; message: string } }
   | { type: 'DISMISS_NOTIFICATION'; payload: string }
-  | { type: 'CLEAR_NOTIFICATIONS' };
+  | { type: 'CLEAR_NOTIFICATIONS' }
+  // Tree expansion actions
+  | { type: 'TOGGLE_TREE_ITEM'; payload: string }
+  | { type: 'EXPAND_TREE_ITEMS'; payload: string[] }
+  | { type: 'COLLAPSE_TREE_ITEMS'; payload: string[] };
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INITIAL STATE
@@ -118,16 +158,20 @@ const initialState: UIState = {
     bottomPanel: 200,
   },
   
+  selectedCabinetIds: [],
   selectedDeviceIds: [],
   selectedConnectionIds: [],
   selectedSignalId: null,
+  
+  connectionMode: false,
+  pendingConnection: null,
   
   canvasZoom: 1,
   canvasPosition: { x: 0, y: 0 },
   showGrid: true,
   snapToGrid: true,
   
-  theme: 'light',
+  theme: 'dark',
   showMinimap: true,
   showStatusBar: true,
   
@@ -135,6 +179,8 @@ const initialState: UIState = {
   modalData: null,
   
   notifications: [],
+  
+  expandedTreeItems: new Set(),
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -143,6 +189,10 @@ const initialState: UIState = {
 
 function uiReducer(state: UIState, action: UIAction): UIState {
   switch (action.type) {
+    // ─────────────────────────────────────────────────────────────────────────
+    // View actions
+    // ─────────────────────────────────────────────────────────────────────────
+    
     case 'SET_VIEW_MODE':
       return { ...state, viewMode: action.payload };
 
@@ -167,6 +217,10 @@ function uiReducer(state: UIState, action: UIAction): UIState {
       return { ...state, tabs: newTabs, activeTab: newActiveTab };
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Panel actions
+    // ─────────────────────────────────────────────────────────────────────────
+
     case 'TOGGLE_LEFT_SIDEBAR':
       return { ...state, leftSidebarOpen: !state.leftSidebarOpen };
 
@@ -185,9 +239,26 @@ function uiReducer(state: UIState, action: UIAction): UIState {
         panelSizes: { ...state.panelSizes, [action.payload.panel]: action.payload.size },
       };
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Selection actions
+    // ─────────────────────────────────────────────────────────────────────────
+
+    case 'SET_SELECTED_CABINETS':
+      return { ...state, selectedCabinetIds: action.payload };
+
+    case 'SET_SELECTED_DEVICES':
+      return { ...state, selectedDeviceIds: action.payload };
+
+    case 'SET_SELECTED_CONNECTIONS':
+      return { ...state, selectedConnectionIds: action.payload };
+
+    case 'SET_SELECTED_SIGNAL':
+      return { ...state, selectedSignalId: action.payload };
+
     case 'SET_SELECTION':
       return {
         ...state,
+        selectedCabinetIds: action.payload.cabinetIds ?? state.selectedCabinetIds,
         selectedDeviceIds: action.payload.deviceIds ?? state.selectedDeviceIds,
         selectedConnectionIds: action.payload.connectionIds ?? state.selectedConnectionIds,
         selectedSignalId: action.payload.signalId !== undefined ? action.payload.signalId : state.selectedSignalId,
@@ -196,10 +267,29 @@ function uiReducer(state: UIState, action: UIAction): UIState {
     case 'CLEAR_SELECTION':
       return {
         ...state,
+        selectedCabinetIds: [],
         selectedDeviceIds: [],
         selectedConnectionIds: [],
         selectedSignalId: null,
       };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Connection mode actions
+    // ─────────────────────────────────────────────────────────────────────────
+
+    case 'SET_CONNECTION_MODE':
+      return { 
+        ...state, 
+        connectionMode: action.payload,
+        pendingConnection: action.payload ? state.pendingConnection : null,
+      };
+
+    case 'SET_PENDING_CONNECTION':
+      return { ...state, pendingConnection: action.payload };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Canvas actions
+    // ─────────────────────────────────────────────────────────────────────────
 
     case 'SET_CANVAS_ZOOM':
       return { ...state, canvasZoom: Math.max(0.1, Math.min(4, action.payload)) };
@@ -213,6 +303,10 @@ function uiReducer(state: UIState, action: UIAction): UIState {
     case 'TOGGLE_SNAP_TO_GRID':
       return { ...state, snapToGrid: !state.snapToGrid };
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Theme actions
+    // ─────────────────────────────────────────────────────────────────────────
+
     case 'SET_THEME':
       return { ...state, theme: action.payload };
 
@@ -221,6 +315,10 @@ function uiReducer(state: UIState, action: UIAction): UIState {
 
     case 'TOGGLE_STATUS_BAR':
       return { ...state, showStatusBar: !state.showStatusBar };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Modal actions
+    // ─────────────────────────────────────────────────────────────────────────
 
     case 'OPEN_MODAL':
       return {
@@ -231,6 +329,10 @@ function uiReducer(state: UIState, action: UIAction): UIState {
 
     case 'CLOSE_MODAL':
       return { ...state, activeModal: null, modalData: null };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Notification actions
+    // ─────────────────────────────────────────────────────────────────────────
 
     case 'ADD_NOTIFICATION':
       return {
@@ -255,6 +357,32 @@ function uiReducer(state: UIState, action: UIAction): UIState {
     case 'CLEAR_NOTIFICATIONS':
       return { ...state, notifications: [] };
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Tree expansion actions
+    // ─────────────────────────────────────────────────────────────────────────
+
+    case 'TOGGLE_TREE_ITEM': {
+      const newExpanded = new Set(state.expandedTreeItems);
+      if (newExpanded.has(action.payload)) {
+        newExpanded.delete(action.payload);
+      } else {
+        newExpanded.add(action.payload);
+      }
+      return { ...state, expandedTreeItems: newExpanded };
+    }
+
+    case 'EXPAND_TREE_ITEMS': {
+      const newExpanded = new Set(state.expandedTreeItems);
+      action.payload.forEach(id => newExpanded.add(id));
+      return { ...state, expandedTreeItems: newExpanded };
+    }
+
+    case 'COLLAPSE_TREE_ITEMS': {
+      const newExpanded = new Set(state.expandedTreeItems);
+      action.payload.forEach(id => newExpanded.delete(id));
+      return { ...state, expandedTreeItems: newExpanded };
+    }
+
     default:
       return state;
   }
@@ -266,36 +394,62 @@ function uiReducer(state: UIState, action: UIAction): UIState {
 
 interface UIContextValue {
   state: UIState;
+  
   // View actions
   setViewMode: (mode: ViewMode) => void;
   setActiveTab: (tabId: string) => void;
   addTab: (tab: { id: string; title: string; type: 'canvas' | 'table' | 'properties' }) => void;
   closeTab: (tabId: string) => void;
+  
   // Panel actions
   toggleLeftSidebar: () => void;
   toggleRightSidebar: () => void;
   toggleBottomPanel: () => void;
   setSidebarPanel: (panel: SidebarPanel) => void;
   setPanelSize: (panel: keyof PanelSizes, size: number) => void;
+  
   // Selection actions
-  setSelection: (selection: { deviceIds?: string[]; connectionIds?: string[]; signalId?: string | null }) => void;
+  setSelectedCabinets: (ids: string[]) => void;
+  setSelectedDevices: (ids: string[]) => void;
+  setSelectedConnections: (ids: string[]) => void;
+  setSelectedSignal: (id: string | null) => void;
+  setSelection: (selection: { 
+    cabinetIds?: string[]; 
+    deviceIds?: string[]; 
+    connectionIds?: string[]; 
+    signalId?: string | null 
+  }) => void;
   clearSelection: () => void;
+  
+  // Connection mode actions
+  setConnectionMode: (enabled: boolean) => void;
+  setPendingConnection: (pending: PendingConnection | null) => void;
+  
   // Canvas actions
   setCanvasZoom: (zoom: number) => void;
   setCanvasPosition: (position: { x: number; y: number }) => void;
   toggleGrid: () => void;
   toggleSnapToGrid: () => void;
+  
   // Theme & preferences
   setTheme: (theme: Theme) => void;
   toggleMinimap: () => void;
   toggleStatusBar: () => void;
+  
   // Modal actions
   openModal: (modal: string, data?: Record<string, unknown>) => void;
   closeModal: () => void;
+  
   // Notification actions
   addNotification: (type: 'info' | 'success' | 'warning' | 'error', message: string) => void;
   dismissNotification: (id: string) => void;
   clearNotifications: () => void;
+  
+  // Tree expansion actions
+  toggleTreeItem: (id: string) => void;
+  expandTreeItems: (ids: string[]) => void;
+  collapseTreeItems: (ids: string[]) => void;
+  isTreeItemExpanded: (id: string) => boolean;
 }
 
 const UIContext = createContext<UIContextValue | null>(null);
@@ -333,7 +487,7 @@ export function UIProvider({ children }: UIProviderProps) {
     dispatch({ type: 'TOGGLE_LEFT_SIDEBAR' });
   }, []);
 
-    const toggleRightSidebar = useCallback(() => {
+  const toggleRightSidebar = useCallback(() => {
     dispatch({ type: 'TOGGLE_RIGHT_SIDEBAR' });
   }, []);
 
@@ -350,12 +504,42 @@ export function UIProvider({ children }: UIProviderProps) {
   }, []);
 
   // Selection actions
-  const setSelection = useCallback((selection: { deviceIds?: string[]; connectionIds?: string[]; signalId?: string | null }) => {
+  const setSelectedCabinets = useCallback((ids: string[]) => {
+    dispatch({ type: 'SET_SELECTED_CABINETS', payload: ids });
+  }, []);
+
+  const setSelectedDevices = useCallback((ids: string[]) => {
+    dispatch({ type: 'SET_SELECTED_DEVICES', payload: ids });
+  }, []);
+
+  const setSelectedConnections = useCallback((ids: string[]) => {
+    dispatch({ type: 'SET_SELECTED_CONNECTIONS', payload: ids });
+  }, []);
+
+  const setSelectedSignal = useCallback((id: string | null) => {
+    dispatch({ type: 'SET_SELECTED_SIGNAL', payload: id });
+  }, []);
+
+  const setSelection = useCallback((selection: { 
+    cabinetIds?: string[]; 
+    deviceIds?: string[]; 
+    connectionIds?: string[]; 
+    signalId?: string | null 
+  }) => {
     dispatch({ type: 'SET_SELECTION', payload: selection });
   }, []);
 
   const clearSelection = useCallback(() => {
     dispatch({ type: 'CLEAR_SELECTION' });
+  }, []);
+
+  // Connection mode actions
+  const setConnectionMode = useCallback((enabled: boolean) => {
+    dispatch({ type: 'SET_CONNECTION_MODE', payload: enabled });
+  }, []);
+
+  const setPendingConnection = useCallback((pending: PendingConnection | null) => {
+    dispatch({ type: 'SET_PENDING_CONNECTION', payload: pending });
   }, []);
 
   // Canvas actions
@@ -410,6 +594,23 @@ export function UIProvider({ children }: UIProviderProps) {
     dispatch({ type: 'CLEAR_NOTIFICATIONS' });
   }, []);
 
+  // Tree expansion actions
+  const toggleTreeItem = useCallback((id: string) => {
+    dispatch({ type: 'TOGGLE_TREE_ITEM', payload: id });
+  }, []);
+
+  const expandTreeItems = useCallback((ids: string[]) => {
+    dispatch({ type: 'EXPAND_TREE_ITEMS', payload: ids });
+  }, []);
+
+  const collapseTreeItems = useCallback((ids: string[]) => {
+    dispatch({ type: 'COLLAPSE_TREE_ITEMS', payload: ids });
+  }, []);
+
+  const isTreeItemExpanded = useCallback((id: string): boolean => {
+    return state.expandedTreeItems.has(id);
+  }, [state.expandedTreeItems]);
+
   const value = useMemo<UIContextValue>(
     () => ({
       state,
@@ -422,8 +623,14 @@ export function UIProvider({ children }: UIProviderProps) {
       toggleBottomPanel,
       setSidebarPanel,
       setPanelSize,
+      setSelectedCabinets,
+      setSelectedDevices,
+      setSelectedConnections,
+      setSelectedSignal,
       setSelection,
       clearSelection,
+      setConnectionMode,
+      setPendingConnection,
       setCanvasZoom,
       setCanvasPosition,
       toggleGrid,
@@ -436,6 +643,10 @@ export function UIProvider({ children }: UIProviderProps) {
       addNotification,
       dismissNotification,
       clearNotifications,
+      toggleTreeItem,
+      expandTreeItems,
+      collapseTreeItems,
+      isTreeItemExpanded,
     }),
     [
       state,
@@ -448,8 +659,14 @@ export function UIProvider({ children }: UIProviderProps) {
       toggleBottomPanel,
       setSidebarPanel,
       setPanelSize,
+      setSelectedCabinets,
+      setSelectedDevices,
+      setSelectedConnections,
+      setSelectedSignal,
       setSelection,
       clearSelection,
+      setConnectionMode,
+      setPendingConnection,
       setCanvasZoom,
       setCanvasPosition,
       toggleGrid,
@@ -462,6 +679,10 @@ export function UIProvider({ children }: UIProviderProps) {
       addNotification,
       dismissNotification,
       clearNotifications,
+      toggleTreeItem,
+      expandTreeItems,
+      collapseTreeItems,
+      isTreeItemExpanded,
     ]
   );
 
@@ -479,4 +700,3 @@ export function useUI(): UIContextValue {
   }
   return context;
 }
-    

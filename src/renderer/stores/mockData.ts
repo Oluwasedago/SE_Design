@@ -1,3 +1,4 @@
+// typescript
 // src/renderer/stores/mockData.ts
 // Demo data for testing the workspace
 // ═══════════════════════════════════════════════════════════════════════════
@@ -10,6 +11,7 @@ import type {
   SignalPoint,
   Project,
   ProjectSettings,
+  CabinetInstance,
 } from '../../core/types';
 import {
   SignalType,
@@ -471,6 +473,12 @@ export const mockDevices: Map<string, DeviceInstance> = new Map([
 ]);
 
 // ═══════════════════════════════════════════════════════════════════════════
+// CABINET INSTANCES (Empty for now - populated via UI)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const mockCabinets: Map<string, CabinetInstance> = new Map();
+
+// ═══════════════════════════════════════════════════════════════════════════
 // CONNECTIONS (Wiring between devices)
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -567,6 +575,7 @@ export const mockProject: Project = {
   status: ProjectStatus.DRAFT,
   revision: 'A',
   version: '1.0.0',
+  cabinets: mockCabinets,
   devices: mockDevices,
   connections: mockConnections,
   udtLibrary: mockUDTLibrary,

@@ -1,0 +1,85 @@
+/* css */
+/* src/renderer/components/IDELayout/MenuBar.module.css */
+
+.menuBar {
+  display: flex;
+  align-items: center;
+  height: var(--menubar-height);
+  background-color: var(--color-bg-tertiary);
+  border-bottom: var(--border-width) solid var(--color-border-primary);
+  padding: 0 var(--spacing-2);
+  user-select: none;
+}
+
+.menuContainer {
+  position: relative;
+}
+
+.menuButton {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.menuButton:hover,
+.menuButtonActive {
+  background-color: var(--color-bg-hover);
+}
+
+.menuDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  background-color: var(--color-bg-tertiary);
+  border: var(--border-width) solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-2) 0;
+  z-index: var(--z-dropdown);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition-fast);
+}
+
+.menuItem:hover:not(:disabled) {
+  background-color: var(--color-bg-selected);
+}
+
+.menuItemDisabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.menuItemLabel {
+  flex: 1;
+}
+
+.menuItemShortcut {
+  margin-left: var(--spacing-8);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.menuSeparator {
+  height: 1px;
+  margin: var(--spacing-2) var(--spacing-4);
+  background-color: var(--color-border-primary);
+}

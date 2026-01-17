@@ -464,9 +464,13 @@ export interface Project {
   status: ProjectStatus;
   revision: string;
   version: string;
-  devices: Map<string, DeviceInstance>;
-  connections: Map<string, SignalConnection>;
-  udtLibrary: Map<string, UDTTemplate>;
+
+  // Core data collections
+  cabinets: Map<string, CabinetInstance>;    // Equipment containers
+  devices: Map<string, DeviceInstance>;       // Devices/modules
+  connections: Map<string, SignalConnection>; // Signal connections
+  udtLibrary: Map<string, UDTTemplate>;       // Device templates
+
   settings: ProjectSettings;
   createdAt: Date;
   createdBy: string;
