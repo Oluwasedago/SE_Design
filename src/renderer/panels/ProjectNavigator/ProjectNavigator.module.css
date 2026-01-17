@@ -1,0 +1,88 @@
+/* src/renderer/panels/ProjectNavigator/ProjectNavigator.module.css */
+
+.navigator {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border-primary);
+  overflow: hidden;
+}
+
+.header {
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid var(--color-border-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.treeView {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--spacing-2) 0;
+}
+
+.nodeContainer {
+  user-select: none;
+}
+
+.nodeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  margin: 0 var(--spacing-2);
+  transition: background-color var(--transition-fast);
+}
+
+.nodeRow:hover {
+  background-color: var(--color-bg-elevated);
+}
+
+.nodeRow:focus {
+  outline: none;
+  background-color: var(--color-bg-elevated);
+}
+
+.nodeRow.selected {
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-inverse);
+}
+
+.nodeRow.selected:hover {
+  background-color: var(--color-accent-primary-hover);
+}
+
+.toggle {
+  width: 16px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.icon {
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.children {
+  display: contents;
+}

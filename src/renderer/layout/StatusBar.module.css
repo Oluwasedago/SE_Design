@@ -1,0 +1,40 @@
+/* css */
+/* src/renderer/layout/IDELayout/StatusBar.module.css */
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--statusbar-height);
+  padding: 0 var(--spacing-6);
+  background-color: var(--color-statusbar-bg);
+  color: var(--color-statusbar-text);
+  font-size: var(--font-size-xs);
+  user-select: none;
+}
+
+.statusBarSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.statusBarItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.statusBarItemWarning {
+  color: #ffd700;
+}
+
+.statusBarItemHighlight {
+  padding: var(--spacing-1) var(--spacing-3);
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+}
+
+.statusBarSeparator {
+  color: rgba(255, 255, 255, 0.4);
+}
